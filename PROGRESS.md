@@ -3,7 +3,7 @@
 ## 📋 Current Status
 
 **Last Updated:** October 26, 2025
-**Latest Commit:** Implement unified marketplace infrastructure and pages (30be320)
+**Latest Commit:** Add comprehensive marketplace seed data guide (0b3f7d1)
 
 ---
 
@@ -45,6 +45,22 @@
   - Type-safe TypeScript implementation
 
 - **Status:** Production ready, successfully building
+
+### Phase 3.5: Marketplace Navigation & Mock Data (COMPLETED ✓)
+- ✅ Integrated "Tienda" link to header navigation (desktop & mobile)
+- ✅ Added marketplace card to homepage with visual distinction (purple gradient)
+- ✅ Created comprehensive mock data for two artisan providers:
+  - Cerámica Gress Atacama: 6 ceramic products
+  - Orfebrería Atacama Auténtica: 7 jewelry products (925 silver)
+- ✅ Built admin seed management page (`/admin/seed-marketplace`)
+- ✅ Created seed functions to load/clear Firestore data
+- ✅ All 13 mock products include realistic details (prices, stock, ratings, images)
+- **Files Created:**
+  - `src/lib/seeds/marketplaceSeed.ts` - Mock data definitions
+  - `src/lib/seeds/seedMarketplace.ts` - Seed functions (load/clear)
+  - `src/app/admin/seed-marketplace/page.tsx` - Admin UI
+  - `MARKETPLACE_SEED_GUIDE.md` - Complete usage guide
+- **Status:** Ready for local testing
 
 ---
 
