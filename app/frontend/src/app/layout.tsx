@@ -1,6 +1,7 @@
 import { AuthProvider } from "../context/AuthContext";
 import { CartProvider } from "../context/CartContext";
 import { UserProfileProvider } from "../context/UserProfileContext";
+import { OnboardingProvider } from "../context/OnboardingContext";
 import "./globals.css";
 
 export default function RootLayout({
@@ -18,7 +19,9 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <UserProfileProvider>
-              {children}
+              <OnboardingProvider>
+                {children}
+              </OnboardingProvider>
             </UserProfileProvider>
           </CartProvider>
         </AuthProvider>
