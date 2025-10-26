@@ -36,8 +36,9 @@ export class MarketplaceService {
   ): Promise<Listing> {
     const listing: Listing = {
       providerId,
-      type: input.type,
+      baseType: input.baseType,
       category: input.category,
+      subcategory: input.subcategory,
       name: input.name,
       description: input.description,
       price: input.price,
@@ -46,6 +47,10 @@ export class MarketplaceService {
       rating: 0,
       reviewCount: 0,
       status: 'draft',
+      tags: input.tags,
+      eatAttributes: input.eatAttributes,
+      tourAttributes: input.tourAttributes,
+      serviceAttributes: input.serviceAttributes,
       productInfo: input.productInfo,
       serviceInfo: input.serviceInfo,
       createdAt: serverTimestamp() as Timestamp,
@@ -154,9 +159,9 @@ export class MarketplaceService {
       constraints.push(where('category', '==', filters.category));
     }
 
-    // Filtro por tipo
-    if (filters.type) {
-      constraints.push(where('type', '==', filters.type));
+    // Filtro por tipo base
+    if (filters.baseType) {
+      constraints.push(where('baseType', '==', filters.baseType));
     }
 
     // Ordenar por rating

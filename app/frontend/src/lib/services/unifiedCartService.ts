@@ -90,7 +90,7 @@ export class UnifiedCartService {
       const newItem: CartItem = {
         listingId,
         providerId: listing.providerId,
-        type: listing.type,
+        baseType: listing.baseType,
         quantity,
         price: listing.price,
         listingName: listing.name,

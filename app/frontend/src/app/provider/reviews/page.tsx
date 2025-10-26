@@ -181,7 +181,7 @@ export default function ProviderReviews() {
           ].map((option) => (
             <button
               key={option.id}
-              onClick={() => setSortBy(option.id as any)}
+              onClick={() => setSortBy(option.id as 'recent' | 'rating' | 'helpful')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 sortBy === option.id
                   ? 'bg-orange-600 text-white'

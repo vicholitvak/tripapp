@@ -9,11 +9,10 @@ export const marketplaceMockData = {
   ceramicaGress: {
     providerId: 'ceramica-gress-atacama',
     providerName: 'Cerámica Gress Atacama',
-    type: 'product' as const,
     listings: [
       {
         providerId: 'ceramica-gress-atacama',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'ceramica',
         name: 'Macetero de Cerámica Gress - Diseño Tribal',
         description: 'Hermoso macetero hecho a mano con cerámica gress y detalles geométricos inspirados en la cultura atacameña. Perfecto para plantas interiores.',
@@ -27,6 +26,8 @@ export const marketplaceMockData = {
         reviewCount: 24,
         status: 'active' as ListingStatus,
         featured: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 15,
           weight: 1.2,
@@ -36,7 +37,7 @@ export const marketplaceMockData = {
       },
       {
         providerId: 'ceramica-gress-atacama',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'ceramica',
         name: 'Plato Decorativo de Cerámica - Motivos Andinos',
         description: 'Plato artesanal de cerámica con motivos andinos grabados a mano. Cada pieza es única. Ideal para decoración o como pieza funcional.',
@@ -50,6 +51,8 @@ export const marketplaceMockData = {
         reviewCount: 18,
         status: 'active' as ListingStatus,
         featured: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 20,
           weight: 0.8,
@@ -59,7 +62,7 @@ export const marketplaceMockData = {
       },
       {
         providerId: 'ceramica-gress-atacama',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'ceramica',
         name: 'Jarra de Cerámica Artesanal',
         description: 'Jarra de cerámica gress hecha al torno, con acabado natural. Funcional y decorativa, perfecta para servir agua o como florero.',
@@ -72,6 +75,8 @@ export const marketplaceMockData = {
         reviewCount: 12,
         status: 'active' as ListingStatus,
         featured: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 10,
           weight: 1.5,
@@ -81,7 +86,7 @@ export const marketplaceMockData = {
       },
       {
         providerId: 'ceramica-gress-atacama',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'ceramica',
         name: 'Taza de Cerámica Personalizada',
         description: 'Taza de cerámica hecha a mano, con diseños únicos. Ideal para regalar o para ti mismo. Apto para uso diario.',
@@ -94,6 +99,8 @@ export const marketplaceMockData = {
         reviewCount: 35,
         status: 'active' as ListingStatus,
         featured: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 50,
           weight: 0.4,
@@ -103,7 +110,7 @@ export const marketplaceMockData = {
       },
       {
         providerId: 'ceramica-gress-atacama',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'ceramica',
         name: 'Set de Cuencos de Cerámica - 3 piezas',
         description: 'Set de 3 cuencos de diferentes tamaños, perfectos para servir comida o guardar objetos pequeños. Terminación mate natural.',
@@ -116,6 +123,8 @@ export const marketplaceMockData = {
         reviewCount: 28,
         status: 'active' as ListingStatus,
         featured: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 8,
           weight: 2.0,
@@ -125,7 +134,7 @@ export const marketplaceMockData = {
       },
       {
         providerId: 'ceramica-gress-atacama',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'ceramica',
         name: 'Espejo de Cerámica Marco Artesanal',
         description: 'Espejo decorativo con marco de cerámica elaborado. Excelente pieza para la decoración del hogar con estilo rústico moderno.',
@@ -138,6 +147,8 @@ export const marketplaceMockData = {
         reviewCount: 16,
         status: 'active' as ListingStatus,
         featured: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 5,
           weight: 2.5,
@@ -151,11 +162,10 @@ export const marketplaceMockData = {
   orfebreria: {
     providerId: 'orfeberia-atacama-autentica',
     providerName: 'Orfebrería Atacama Auténtica',
-    type: 'product' as const,
     listings: [
       {
         providerId: 'orfeberia-atacama-autentica',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'joyeria',
         name: 'Collar de Plata Ley 925 - Piedra de Luna',
         description: 'Collar artesanal de plata ley 925 con piedra de luna natural. Hecho a mano por maestro orfebre. Incluye certificado de autenticidad.',
@@ -169,6 +179,8 @@ export const marketplaceMockData = {
         reviewCount: 42,
         status: 'active' as ListingStatus,
         featured: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 8,
           weight: 0.15,
@@ -178,7 +190,7 @@ export const marketplaceMockData = {
       },
       {
         providerId: 'orfeberia-atacama-autentica',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'joyeria',
         name: 'Anillo de Plata - Diseño Étnico',
         description: 'Anillo de plata ley 925 con diseño étnico inspirado en la cultura andina. Tallado a mano con detalles únicos. Tallas disponibles: 16-22.',
@@ -191,6 +203,8 @@ export const marketplaceMockData = {
         reviewCount: 38,
         status: 'active' as ListingStatus,
         featured: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 12,
           weight: 0.08,
@@ -200,7 +214,7 @@ export const marketplaceMockData = {
       },
       {
         providerId: 'orfeberia-atacama-autentica',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'joyeria',
         name: 'Pulsera de Plata con Turquesa Natural',
         description: 'Hermosa pulsera de plata 925 con turquesa natural de Atacama. Cada piedra es única. Cierre de seguridad.',
@@ -213,6 +227,8 @@ export const marketplaceMockData = {
         reviewCount: 31,
         status: 'active' as ListingStatus,
         featured: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 6,
           weight: 0.25,
@@ -222,7 +238,7 @@ export const marketplaceMockData = {
       },
       {
         providerId: 'orfeberia-atacama-autentica',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'joyeria',
         name: 'Aretes de Plata - Forma Gota',
         description: 'Aretes colgantes de plata ley 925 con forma de gota. Diseño minimalista y elegante, perfecto para uso diario.',
@@ -235,6 +251,8 @@ export const marketplaceMockData = {
         reviewCount: 25,
         status: 'active' as ListingStatus,
         featured: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 20,
           weight: 0.05,
@@ -244,7 +262,7 @@ export const marketplaceMockData = {
       },
       {
         providerId: 'orfeberia-atacama-autentica',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'joyeria',
         name: 'Diadema de Plata - Coronita Artesanal',
         description: 'Diadema artesanal de plata ley 925 con diseño de coronita delicada. Pieza única y especial para ocasiones especiales.',
@@ -257,6 +275,8 @@ export const marketplaceMockData = {
         reviewCount: 19,
         status: 'active' as ListingStatus,
         featured: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 3,
           weight: 0.35,
@@ -266,7 +286,7 @@ export const marketplaceMockData = {
       },
       {
         providerId: 'orfeberia-atacama-autentica',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'joyeria',
         name: 'Conjunto Collar + Aretes de Plata',
         description: 'Conjunto elegante de collar y aretes de plata ley 925 con acabado brillante. Perfecto como regalo. Incluye estuche de lujo.',
@@ -279,6 +299,8 @@ export const marketplaceMockData = {
         reviewCount: 22,
         status: 'active' as ListingStatus,
         featured: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 5,
           weight: 0.20,
@@ -288,7 +310,7 @@ export const marketplaceMockData = {
       },
       {
         providerId: 'orfeberia-atacama-autentica',
-        type: 'product',
+        baseType: 'marketplace',
         category: 'joyeria',
         name: 'Broche de Plata - Diseño Cactus',
         description: 'Broche decorativo de plata ley 925 con forma de cactus, símbolo del desierto de Atacama. Accesor único y original.',
@@ -301,6 +323,8 @@ export const marketplaceMockData = {
         reviewCount: 14,
         status: 'active' as ListingStatus,
         featured: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         productInfo: {
           stock: 15,
           weight: 0.10,

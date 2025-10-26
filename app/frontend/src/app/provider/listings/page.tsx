@@ -23,7 +23,15 @@ export default function ProviderListings() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    description: string;
+    price: number;
+    currency: string;
+    duration: string;
+    capacity: number | undefined;
+    active: boolean;
+  }>({
     name: '',
     description: '',
     price: 0,
@@ -110,7 +118,7 @@ export default function ProviderListings() {
     }
   }, [user, authLoading, router]);
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number | boolean | undefined) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,

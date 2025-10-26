@@ -93,7 +93,7 @@ export default function CheckoutPage() {
     }
 
     // Validar dirección solo si hay productos (no servicios)
-    const hasProducts = cart?.items.some(item => item.type === 'product');
+    const hasProducts = cart?.items.some(item => item.baseType === 'marketplace');
     if (hasProducts) {
       if (!address.trim()) {
         errors.address = 'La dirección es requerida';
@@ -347,7 +347,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Mostrar formulario de dirección solo si hay productos */}
-                {cart.items.some(item => item.type === 'product') && (
+                {cart.items.some(item => item.baseType === 'marketplace') && (
                   <>
                     <hr />
                     <h2 className="text-xl font-bold text-gray-900">

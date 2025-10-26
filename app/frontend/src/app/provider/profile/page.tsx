@@ -19,7 +19,25 @@ export default function ProviderProfile() {
   const [saving, setSaving] = useState(false);
 
   // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    personalInfo: {
+      displayName: string;
+      phone: string;
+      email: string;
+      bio: string;
+      photoURL?: string;
+    };
+    businessInfo: {
+      name: string;
+      description: string;
+      category: string;
+      address?: string;
+      website?: string;
+      instagram?: string;
+      facebook?: string;
+      whatsapp?: string;
+    };
+  }>({
     personalInfo: {
       displayName: '',
       phone: '',
