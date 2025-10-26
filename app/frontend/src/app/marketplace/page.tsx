@@ -18,13 +18,12 @@ import {
 } from 'lucide-react';
 
 const CATEGORIES: { value: ListingCategory; label: string }[] = [
+  { value: 'plantas', label: 'Plantas Medicinales' },
   { value: 'joyeria', label: 'Joyería' },
   { value: 'ceramica', label: 'Cerámica' },
   { value: 'textiles', label: 'Textiles' },
-  { value: 'comida', label: 'Alimentos Locales' },
-  { value: 'plantas', label: 'Plantas Medicinales' },
   { value: 'artesania', label: 'Artesanía' },
-  { value: 'otros', label: 'Otros Productos' },
+  { value: 'otros', label: 'Otros' },
 ];
 
 export default function MarketplacePage() {
@@ -44,20 +43,20 @@ export default function MarketplacePage() {
   const [showFilters, setShowFilters] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock listings for demonstration - Solo productos físicos para turistas
+  // Mock listings for demonstration - Productos para llevar (hierbas, artesanía, joyas)
   const MOCK_LISTINGS: Listing[] = [
     {
       id: '1',
       providerId: 'provider-1',
       type: 'product',
-      category: 'comida',
-      name: 'Empanadas Caseras - Pack de 6',
-      description: 'Deliciosas empanadas de queso y champiñones recién hechas. Entrega en tu hostal.',
-      price: 3000,
+      category: 'plantas',
+      name: 'Rica-Rica - Hierba Medicinal',
+      description: 'Rica-rica seca en bolsitas (50g). Ideal para té digestivo y mal de altura. Recolectada en el altiplano.',
+      price: 5000,
       currency: 'CLP',
-      images: ['https://images.unsplash.com/photo-1585238341710-4dd0bd180d8d?w=400'],
-      rating: 4.8,
-      reviewCount: 24,
+      images: ['https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400'],
+      rating: 4.9,
+      reviewCount: 45,
       status: 'active',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -65,6 +64,38 @@ export default function MarketplacePage() {
     {
       id: '2',
       providerId: 'provider-2',
+      type: 'product',
+      category: 'plantas',
+      name: 'Chachacoma Deshidratada',
+      description: 'Chachacoma 100% natural (50g). Excelente para el mal de altura y problemas digestivos. Cosecha sustentable.',
+      price: 6000,
+      currency: 'CLP',
+      images: ['https://images.unsplash.com/photo-1515694590279-73124e8df5c5?w=400'],
+      rating: 4.8,
+      reviewCount: 38,
+      status: 'active',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '3',
+      providerId: 'provider-3',
+      type: 'product',
+      category: 'plantas',
+      name: 'Hoja de Coca - Bolsa 100g',
+      description: 'Hojas de coca tradicionales. Uso ancestral para energía y mal de altura. 100% natural.',
+      price: 4000,
+      currency: 'CLP',
+      images: ['https://images.unsplash.com/photo-1606588260160-8e536f22c56a?w=400'],
+      rating: 5.0,
+      reviewCount: 67,
+      status: 'active',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '4',
+      providerId: 'provider-4',
       type: 'product',
       category: 'ceramica',
       name: 'Cerámica Artesanal Atacameña',
@@ -79,8 +110,8 @@ export default function MarketplacePage() {
       updatedAt: new Date(),
     },
     {
-      id: '3',
-      providerId: 'provider-3',
+      id: '5',
+      providerId: 'provider-5',
       type: 'product',
       category: 'joyeria',
       name: 'Collar de Lapis Lazuli',
@@ -95,8 +126,8 @@ export default function MarketplacePage() {
       updatedAt: new Date(),
     },
     {
-      id: '4',
-      providerId: 'provider-4',
+      id: '6',
+      providerId: 'provider-6',
       type: 'product',
       category: 'textiles',
       name: 'Manta Andina Tradicional',
@@ -106,22 +137,6 @@ export default function MarketplacePage() {
       images: ['https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400'],
       rating: 5.0,
       reviewCount: 15,
-      status: 'active',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: '5',
-      providerId: 'provider-5',
-      type: 'product',
-      category: 'plantas',
-      name: 'Té de Hierba de la Puna',
-      description: 'Mezcla de hierbas medicinales del altiplano. Ayuda con el mal de altura. Pack de 20 sobres.',
-      price: 8000,
-      currency: 'CLP',
-      images: ['https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400'],
-      rating: 4.6,
-      reviewCount: 28,
       status: 'active',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -253,7 +268,7 @@ export default function MarketplacePage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Tienda Local</h1>
             <p className="text-sm text-gray-600">
-              Productos artesanales y locales con entrega a tu hostal
+              Hierbas medicinales, artesanía y productos locales para llevar
             </p>
           </div>
 
