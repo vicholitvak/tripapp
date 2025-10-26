@@ -344,9 +344,19 @@ export default function MarketplacePage() {
       setError(null);
       try {
         const allListings = await MarketplaceService.getAllActive();
-        setListings(allListings);
-        setFilteredListings(allListings);
-        // TODO: Load providers from Firebase
+
+        // Si Firebase devuelve datos vacíos, usar mocks
+        if (allListings.length === 0) {
+          console.log('No listings in Firebase, using mock data');
+          setProviders(MOCK_PROVIDERS);
+          const allProducts = MOCK_PROVIDERS.flatMap(provider => provider.products);
+          setListings(allProducts);
+          setFilteredListings(allProducts);
+        } else {
+          setListings(allListings);
+          setFilteredListings(allListings);
+          // TODO: Load providers from Firebase
+        }
       } catch (firebaseErr) {
         console.warn('Firebase error loading listings (likely permissions), using mock data:', firebaseErr);
         // Use mock data: flatten all products from all providers
