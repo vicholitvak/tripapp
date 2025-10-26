@@ -1,9 +1,19 @@
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+'use client';
 
-export default function PaymentSuccess() {
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+
+interface Booking {
+  tourTitle: string;
+  date: string;
+  tourId: string;
+  numberOfPeople: number;
+  totalPrice: number;
+}
+
+function PaymentSuccessContent() {
   const searchParams = useSearchParams();
-  const [booking, setBooking] = useState(null);
+  const [booking, setBooking] = useState<Booking | null>(null);
   const preferenceId = searchParams.get('preference_id');
   const bookingId = searchParams.get('external_reference'); // From MP redirect, but may need to fetch
 
@@ -35,6 +45,21 @@ export default function PaymentSuccess() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function PaymentSuccess() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8 text-center">
+          <h1 className="text-3xl font-bold text-green-600 mb-4">¡Pago Exitoso!</h1>
+          <p>Cargando...</p>
+        </div>
+      </div>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }
 
