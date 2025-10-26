@@ -194,6 +194,7 @@ export default function Services() {
               <Link href="/tours" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">¿Qué Hacer?</Link>
               <Link href="/eat" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">¿Qué Comer?</Link>
               <Link href="/services" className="text-atacama-orange font-bold transition-colors">Servicios</Link>
+              <Link href="/marketplace" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">Tienda</Link>
             </nav>
 
             <div className="flex items-center space-x-4">

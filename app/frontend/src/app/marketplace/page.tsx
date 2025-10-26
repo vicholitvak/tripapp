@@ -21,14 +21,10 @@ const CATEGORIES: { value: ListingCategory; label: string }[] = [
   { value: 'joyeria', label: 'Joyería' },
   { value: 'ceramica', label: 'Cerámica' },
   { value: 'textiles', label: 'Textiles' },
-  { value: 'comida', label: 'Comida' },
-  { value: 'tour_astronomico', label: 'Tour Astronómico' },
-  { value: 'tour_volcan', label: 'Tour Volcán' },
-  { value: 'tour_trekking', label: 'Tour Trekking' },
-  { value: 'transfer', label: 'Transfer' },
-  { value: 'taxi', label: 'Taxi' },
-  { value: 'bicicleta', label: 'Bicicleta' },
-  { value: 'taller', label: 'Taller' },
+  { value: 'comida', label: 'Alimentos Locales' },
+  { value: 'plantas', label: 'Plantas Medicinales' },
+  { value: 'artesania', label: 'Artesanía' },
+  { value: 'otros', label: 'Otros Productos' },
 ];
 
 export default function MarketplacePage() {
@@ -48,15 +44,15 @@ export default function MarketplacePage() {
   const [showFilters, setShowFilters] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock listings for demonstration
+  // Mock listings for demonstration - Solo productos físicos para turistas
   const MOCK_LISTINGS: Listing[] = [
     {
       id: '1',
       providerId: 'provider-1',
       type: 'product',
       category: 'comida',
-      name: 'Empanadas Caseras',
-      description: 'Deliciosas empanadas de queso y champiñones recién hechas',
+      name: 'Empanadas Caseras - Pack de 6',
+      description: 'Deliciosas empanadas de queso y champiñones recién hechas. Entrega en tu hostal.',
       price: 3000,
       currency: 'CLP',
       images: ['https://images.unsplash.com/photo-1585238341710-4dd0bd180d8d?w=400'],
@@ -69,15 +65,15 @@ export default function MarketplacePage() {
     {
       id: '2',
       providerId: 'provider-2',
-      type: 'service',
-      category: 'tour_astronomico',
-      name: 'Tour Astronómico',
-      description: 'Experiencia única observando las estrellas desde el desierto de Atacama',
-      price: 45000,
+      type: 'product',
+      category: 'ceramica',
+      name: 'Cerámica Artesanal Atacameña',
+      description: 'Hermosas piezas de cerámica hecha a mano por artesanos locales. Diseños tradicionales del desierto.',
+      price: 25000,
       currency: 'CLP',
-      images: ['https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400'],
-      rating: 4.9,
-      reviewCount: 52,
+      images: ['https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=400'],
+      rating: 4.7,
+      reviewCount: 18,
       status: 'active',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -86,14 +82,46 @@ export default function MarketplacePage() {
       id: '3',
       providerId: 'provider-3',
       type: 'product',
-      category: 'ceramica',
-      name: 'Cerámica Artesanal',
-      description: 'Hermosas piezas de cerámica hecha a mano por artesanos chilenos',
-      price: 25000,
+      category: 'joyeria',
+      name: 'Collar de Lapis Lazuli',
+      description: 'Hermoso collar artesanal con piedras de lapis lazuli chileno. Diseño único.',
+      price: 18000,
       currency: 'CLP',
-      images: ['https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=400'],
-      rating: 4.7,
-      reviewCount: 18,
+      images: ['https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400'],
+      rating: 4.9,
+      reviewCount: 32,
+      status: 'active',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '4',
+      providerId: 'provider-4',
+      type: 'product',
+      category: 'textiles',
+      name: 'Manta Andina Tradicional',
+      description: 'Manta tejida a mano con técnicas ancestrales. 100% lana de alpaca. Perfecta como recuerdo.',
+      price: 35000,
+      currency: 'CLP',
+      images: ['https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400'],
+      rating: 5.0,
+      reviewCount: 15,
+      status: 'active',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '5',
+      providerId: 'provider-5',
+      type: 'product',
+      category: 'plantas',
+      name: 'Té de Hierba de la Puna',
+      description: 'Mezcla de hierbas medicinales del altiplano. Ayuda con el mal de altura. Pack de 20 sobres.',
+      price: 8000,
+      currency: 'CLP',
+      images: ['https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400'],
+      rating: 4.6,
+      reviewCount: 28,
       status: 'active',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -223,9 +251,9 @@ export default function MarketplacePage() {
       <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Marketplace</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Tienda Local</h1>
             <p className="text-sm text-gray-600">
-              Explora productos y servicios locales
+              Productos artesanales y locales con entrega a tu hostal
             </p>
           </div>
 
