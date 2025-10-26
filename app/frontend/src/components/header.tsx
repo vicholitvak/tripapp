@@ -28,6 +28,7 @@ export function Header() {
               <Link href="/tours" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">¿Qué Hacer?</Link>
               <Link href="/eat" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">¿Qué Comer?</Link>
               <Link href="/services" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">Servicios</Link>
+              <Link href="/marketplace" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">Tienda</Link>
             </nav>
 
             {/* Auth Section */}
@@ -106,6 +107,9 @@ export function Header() {
               </Link>
               <Link href="/services" className="block px-4 py-2 text-gray-700 hover:text-orange-600">
                 Servicios
+              </Link>
+              <Link href="/marketplace" className="block px-4 py-2 text-gray-700 hover:text-orange-600">
+                Tienda
               </Link>
               {!user && (
                 <button

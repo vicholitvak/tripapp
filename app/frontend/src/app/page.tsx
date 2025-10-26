@@ -47,6 +47,16 @@ export default function Home() {
       href: '/services',
       color: 'from-blue-500 to-cyan-500',
       stats: '9+ Proveedores verificados'
+    },
+    {
+      id: 'marketplace',
+      title: '🏪 Tienda',
+      subtitle: 'Artesanías y productos locales',
+      description: 'Descubre joyería, cerámica, textiles y productos artesanales hechos por manos locales.',
+      image: 'https://images.unsplash.com/photo-1564368275-8d0e4c2470d2?w=600&h=400&fit=crop',
+      href: '/marketplace',
+      color: 'from-purple-500 to-pink-500',
+      stats: '100+ Productos disponibles'
     }
   ];
 
