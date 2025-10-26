@@ -1,11 +1,12 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { XCircle, Home, ShoppingCart } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export default function CheckoutFailurePage() {
+function FailureContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -76,5 +77,13 @@ export default function CheckoutFailurePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutFailurePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-b from-orange-50 to-white flex items-center justify-center">Cargando...</div>}>
+      <FailureContent />
+    </Suspense>
   );
 }
