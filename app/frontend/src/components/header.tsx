@@ -35,7 +35,13 @@ export function Header() {
               {loading ? (
                 <div className="h-10 w-10 bg-gray-200 rounded-full animate-pulse" />
               ) : user ? (
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <Link
+                    href="/dashboard"
+                    className="hidden md:inline-block px-4 py-2 text-gray-700 hover:text-orange-600 font-medium transition-colors text-sm"
+                  >
+                    Dashboard
+                  </Link>
                   <Link
                     href="/profile"
                     className="flex items-center space-x-2 px-4 py-2 rounded-full bg-orange-100 hover:bg-orange-200 transition-colors"
