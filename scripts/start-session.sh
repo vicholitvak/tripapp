@@ -12,6 +12,19 @@ set -e
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
+# ============================================================================
+# PARSE COMMAND LINE ARGUMENTS
+# ============================================================================
+TASK_PARAM="${1:-}"
+QUIET_MODE=0
+
+# Check for --quiet flag
+if [[ "$TASK_PARAM" == *"--quiet"* ]]; then
+  QUIET_MODE=1
+  TASK_PARAM="${TASK_PARAM//--quiet/}"
+  TASK_PARAM="$(echo $TASK_PARAM | xargs)"
+fi
+
 # Colors for terminal output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -185,7 +198,33 @@ echo "  ${RED}6)${NC}  Custom Task"
 echo "        └─ Enter your own task"
 echo ""
 
-read -p "Enter your choice (1-6): " CHOICE
+# Determine choice (from parameter or interactive)
+if [[ -z "$TASK_PARAM" ]]; then
+  read -p "Enter your choice (1-6): " CHOICE
+else
+  # Map parameters to choice numbers
+  case "$TASK_PARAM" in
+    1|provider|dashboard|provider-dashboard)
+      CHOICE=1
+      ;;
+    2|marketplace|test|testing)
+      CHOICE=2
+      ;;
+    3|build|fix|errors)
+      CHOICE=3
+      ;;
+    4|docs|documentation|update)
+      CHOICE=4
+      ;;
+    5|review|code|optimize)
+      CHOICE=5
+      ;;
+    *)
+      CHOICE=6
+      CUSTOM_TASK="$TASK_PARAM"
+      ;;
+  esac
+fi
 
 case $CHOICE in
     1)
@@ -214,7 +253,9 @@ case $CHOICE in
         SELECTED_DESCRIPTION="Review existing code, optimize performance, refactor if needed"
         ;;
     6)
-        read -p "Enter your custom task: " CUSTOM_TASK
+        if [[ -z "$CUSTOM_TASK" ]]; then
+          read -p "Enter your custom task: " CUSTOM_TASK
+        fi
         SELECTED_TASK="$CUSTOM_TASK"
         SELECTED_AREA="custom"
         SELECTED_DESCRIPTION="Custom task: $CUSTOM_TASK"
@@ -303,22 +344,40 @@ echo ""
 # FINAL INSTRUCTIONS
 # ============================================================================
 
-print_header "✨ READY TO CODE!"
+if [[ $QUIET_MODE -eq 0 ]]; then
+  print_header "✨ READY TO CODE!"
 
-echo -e "${GREEN}Next steps:${NC}"
-echo ""
-echo "1. Start your dev server:"
-echo -e "   ${CYAN}cd app/frontend && npm run dev${NC}"
-echo ""
-echo "2. Begin working on:"
-echo -e "   ${CYAN}$SELECTED_TASK${NC}"
-echo ""
-echo "3. When you're done, commit your work:"
-echo -e "   ${CYAN}git add . && git commit -m \"Your message\"${NC}"
-echo ""
-echo "4. Update progress when done:"
-echo -e "   ${CYAN}./scripts/start-session.sh${NC}"
-echo ""
+  echo -e "${GREEN}Next steps:${NC}"
+  echo ""
+  echo "1. Start your dev server:"
+  echo -e "   ${CYAN}cd app/frontend && npm run dev${NC}"
+  echo ""
+  echo "2. Begin working on:"
+  echo -e "   ${CYAN}$SELECTED_TASK${NC}"
+  echo ""
+  echo "3. When you're done, commit your work:"
+  echo -e "   ${CYAN}git add . && git commit -m \"Your message\"${NC}"
+  echo ""
+  echo "4. Update progress when done:"
+  echo -e "   ${CYAN}./scripts/start-session.sh${NC}"
+  echo ""
 
-echo -e "${PURPLE}Good luck! 🚀${NC}"
+  echo -e "${PURPLE}Good luck! 🚀${NC}"
+  echo ""
+else
+  echo ""
+  echo -e "${GREEN}✅ SESSION READY${NC}"
+  echo ""
+fi
+
+# ============================================================================
+# PRINT SESSION DATA
+# ============================================================================
+
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${CYAN}📋 SESSION CONTEXT${NC}"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+cat "$SESSION_FILE"
+echo ""
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
