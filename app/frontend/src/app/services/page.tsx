@@ -39,12 +39,12 @@ const servicesData: Service[] = [
     provider: 'Radio Taxi San Pedro',
     category: 'taxi',
     price: 5000,
-    description: 'Servicio de taxi confiable para moverte dentro de San Pedro y alrededores.',
-    features: ['Disponible 24/7', 'Conductores locales', 'Vehículos seguros', 'Tarifas fijas'],
+    description: 'Servicio tradicional de taxi con conductores locales que conocen cada rincón de San Pedro. Disponible 24/7 para moverte por el pueblo y sus alrededores cercanos. Vehículos bien mantenidos con aire acondicionado.',
+    features: ['Disponible 24/7', 'Conductores experimentados', 'Vehículos seguros', 'Tarifas justas'],
     rating: 4.6,
     phone: '+56 9 8765 4321',
     location: 'Centro de San Pedro',
-    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=250&fit=crop',
+    image: 'https://images.unsplash.com/photo-1464207687429-7505649dae38?w=400&h=250&fit=crop',
     available24h: true
   },
   {
@@ -53,12 +53,12 @@ const servicesData: Service[] = [
     provider: 'Taxi Ecológico',
     category: 'taxi',
     price: 6000,
-    description: 'Taxis eléctricos para un transporte sostenible dentro del pueblo.',
-    features: ['Vehículos eléctricos', 'Tarifa plana', 'Conductores certificados', 'GPS integrado'],
+    description: 'Nuevos taxis eléctricos que cuidan el medio ambiente del desierto. Conductores certificados y vehículos modernos con GPS integrado. Tarifa plana sin sorpresas. Mejor opción sostenible para tu transporte local.',
+    features: ['Vehículos eléctricos', 'GPS integrado', 'Conductores certificados', 'Eco-friendly'],
     rating: 4.8,
     phone: '+56 9 8123 4567',
     location: 'Centro y alrededores',
-    image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=250&fit=crop'
+    image: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=400&h=250&fit=crop'
   },
   {
     id: '3',
@@ -66,12 +66,12 @@ const servicesData: Service[] = [
     provider: 'Taxi Seguro SPA',
     category: 'taxi',
     price: 7000,
-    description: 'Servicio especializado de taxi nocturno con mayor seguridad.',
-    features: ['Servicio nocturno', 'GPS tracking', 'Botón de pánico', 'Conductores verificados'],
+    description: 'Especialistas en traslados nocturnos con máxima seguridad. Sistema GPS en tiempo real, botón de pánico y conductores verificados con antecedentes limpios. Tu tranquilidad en las noches del desierto.',
+    features: ['Servicio 24/7', 'GPS tracking en vivo', 'Botón de pánico', 'Conductores verificados'],
     rating: 4.9,
     phone: '+56 9 8987 6543',
     location: 'Todo San Pedro',
-    image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=250&fit=crop',
+    image: 'https://images.unsplash.com/photo-1474487060332-30db4a9c0e5c?w=400&h=250&fit=crop',
     available24h: true
   },
 
@@ -82,12 +82,12 @@ const servicesData: Service[] = [
     provider: 'El Desierto Bike Rental',
     category: 'bike',
     price: 8000,
-    description: 'Bicicletas de calidad para explorar San Pedro y sus alrededores.',
+    description: 'Bicicletas modernas y bien mantenidas para explorar San Pedro. Cascos de seguridad incluidos, equipos con GPS opcional para que no te pierdas. Mantenimiento diario garantizado para tu tranquilidad.',
     features: ['Bicicletas nuevas', 'Cascos incluidos', 'GPS opcional', 'Mantenimiento diario'],
     rating: 4.7,
     phone: '+56 9 8234 5678',
     location: 'Calle Caracoles 145',
-    image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=400&h=250&fit=crop'
+    image: 'https://images.unsplash.com/photo-1571302818048-d2dca801b1a8?w=400&h=250&fit=crop'
   },
   {
     id: '5',
@@ -95,12 +95,12 @@ const servicesData: Service[] = [
     provider: 'Bike Tour SPA',
     category: 'bike',
     price: 12000,
-    description: 'Alquiler de bicicletas premium con tours guiados incluidos.',
-    features: ['Bicicletas de montaña', 'Guía incluido', 'Equipo de seguridad', 'Rutas personalizadas'],
+    description: 'Alquiler premium con guías expertos que conocen las mejores rutas. Bicicletas de montaña de calidad profesional, equipo de seguridad completo y rutas personalizadas según tu nivel. La mejor forma de conocer Atacama pedalando.',
+    features: ['Bicicletas profesionales', 'Guía experto incluido', 'Equipo completo', 'Rutas customizadas'],
     rating: 4.9,
     phone: '+56 9 8567 2341',
     location: 'Av. Gustavo Le Paige 123',
-    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=250&fit=crop'
+    image: 'https://images.unsplash.com/photo-1578610344328-b6b9b7b9b9b9?w=400&h=250&fit=crop'
   },
   {
     id: '6',
@@ -108,12 +108,12 @@ const servicesData: Service[] = [
     provider: 'Eco Bikes',
     category: 'bike',
     price: 6000,
-    description: 'Bicicletas ecológicas para un turismo sostenible.',
-    features: ['Bicicletas híbridas', 'Precio económico', 'Entrega a domicilio', 'Reparaciones gratis'],
+    description: 'Opción económica y ecológica con bicicletas híbridas. Entrega y recogida en tu hotel, reparaciones gratuitas durante el alquiler. Ideal para viajeros conscientes del ambiente que quieren ahorrar.',
+    features: ['Bicicletas híbridas', 'Muy económico', 'Entrega a hotel', 'Reparaciones gratis'],
     rating: 4.4,
     phone: '+56 9 8678 3456',
     location: 'Barrio Los Pintores',
-    image: 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=400&h=250&fit=crop'
+    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=250&fit=crop'
   },
 
   // Transfers al aeropuerto
@@ -123,12 +123,12 @@ const servicesData: Service[] = [
     provider: 'Altiplánico Transfers',
     category: 'transfer',
     price: 25000,
-    description: 'Servicio de transfer desde/hacia el Aeropuerto de Calama.',
-    features: ['Vehículos ejecutivos', 'Servicio puerta a puerta', 'WiFi gratuito', 'Agua mineral'],
+    description: 'Servicio confiable desde el Aeropuerto de Calama. Vehículos ejecutivos cómodos, recogida puerta a puerta, WiFi gratuito y agua mineral durante el trayecto. Monitoreo en tiempo real de tu llegada.',
+    features: ['Vehículos confortables', 'Puerta a puerta', 'WiFi gratis', 'Agua mineral'],
     rating: 4.8,
     phone: '+56 9 8345 6789',
     location: 'Aeropuerto Calama ↔ San Pedro',
-    image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=250&fit=crop'
+    image: 'https://images.unsplash.com/photo-1464207687429-7505649dae38?w=400&h=250&fit=crop'
   },
   {
     id: '8',
@@ -136,12 +136,12 @@ const servicesData: Service[] = [
     provider: 'TransVIP',
     category: 'transfer',
     price: 35000,
-    description: 'Transfer VIP con chofer profesional y vehículo de lujo.',
-    features: ['Servicio ejecutivo', 'Vehículos premium', 'Chofer bilingüe', 'Servicio personalizado'],
+    description: 'Lujo y profesionalismo garantizado. Vehículos premium, chóferes bilingües entrenados, servicio personalizado con champagne y snacks. Para quienes buscan lo mejor en confort y atención desde el primer momento.',
+    features: ['Vehículos premium', 'Chofer bilingüe', 'Servicio VIP', 'Champagne incluido'],
     rating: 5.0,
     phone: '+56 9 8123 7890',
     location: 'Aeropuerto Calama ↔ San Pedro',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=250&fit=crop'
+    image: 'https://images.unsplash.com/photo-1553882900-f2b06423ff9d?w=400&h=250&fit=crop'
   },
   {
     id: '9',
@@ -149,12 +149,12 @@ const servicesData: Service[] = [
     provider: 'Transfer Compartido SPA',
     category: 'transfer',
     price: 15000,
-    description: 'Opción económica de transfer compartido al aeropuerto.',
-    features: ['Precio compartido', 'Horarios fijos', 'Servicio confiable', 'Recogida en hotel'],
+    description: 'Opción presupuestaria compartiendo viaje con otros pasajeros. Horarios fijos y confiables, recogida en hoteles. Perfecto para viajar económicamente sin sacrificar seguridad y comodidad básica.',
+    features: ['Precio económico', 'Horarios establecidos', 'Recogida en hotel', 'Servicio confiable'],
     rating: 4.5,
     phone: '+56 9 8456 1234',
     location: 'Aeropuerto Calama ↔ San Pedro',
-    image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop'
+    image: 'https://images.unsplash.com/photo-1464207687429-7505649dae38?w=400&h=250&fit=crop'
   }
 ];
 

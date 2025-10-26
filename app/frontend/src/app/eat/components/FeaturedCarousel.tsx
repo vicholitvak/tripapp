@@ -9,47 +9,47 @@ import { Star, Clock, MapPin, ChefHat } from 'lucide-react';
 const featuredDishes = [
   {
     id: 1,
-    name: 'Porotos Granados',
-    description: 'Clásico plato chileno con porotos, maíz y zapallo',
+    name: 'Porotos Granados Atacameños',
+    description: 'Clásico imprescindible de la cocina chilena. Preparado con porotos frescos, choclo dulce y zapallo otoñal. Receta familiar transmitida por generaciones. Doña Carmen lo prepara con el toque especial de las abuelas.',
     price: 8500,
     cooker: 'Doña Carmen',
     location: 'San Pedro Centro',
     rating: 4.8,
     prepTime: '25 min',
-    image: 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=400&h=300&fit=crop'
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'
   },
   {
     id: 2,
-    name: 'Humita Atacameña',
-    description: 'Humita preparada con choclo fresco y hierbas del desierto',
+    name: 'Humita Atacameña Premium',
+    description: 'Humita preparada diariamente con choclo recién cosechado del oasis local y hierbas aromáticas del desierto. Envuelta en hojas de choclo y cocida al vapor. Acompañada con salsa criolla casera. Experiencia auténtica del norte.',
     price: 7200,
     cooker: 'Chef Roberto',
     location: 'Cochrane 234',
     rating: 4.9,
     prepTime: '30 min',
-    image: 'https://images.unsplash.com/photo-1551782450-17144efb5723?w=400&h=300&fit=crop'
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop'
   },
   {
     id: 3,
     name: 'Charquicán del Desierto',
-    description: 'Charquicán tradicional con ingredientes locales',
+    description: 'Estofado tradicional atacameño hecho con carne de res tierna, papas andinas, cebolla morada y condimentos locales. Preparado a fuego lento en cazuela de barro. Representa la esencia de la gastronomía del Atacama. Perfecto para calentar el alma en las noches frías.',
     price: 9500,
     cooker: 'María González',
     location: 'Toconao',
     rating: 4.7,
     prepTime: '35 min',
-    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop'
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'
   },
   {
     id: 4,
-    name: 'Pastel de Choclo',
-    description: 'Pastel de choclo relleno con carne y verduras',
+    name: 'Pastel de Choclo Gourmet',
+    description: 'Pastel estratificado con capas de carne roja molida, pollo, huevo duro y aceitunas negras. Cubierto con pasta de choclo cremosa y gratinado al horno. Resultado: explosion de sabores en cada bocado. Especialidad de la Familia Silva.',
     price: 12000,
     cooker: 'Familia Silva',
     location: 'San Pedro Norte',
     rating: 4.6,
     prepTime: '45 min',
-    image: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&h=300&fit=crop'
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop'
   }
 ];
 
