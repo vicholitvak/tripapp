@@ -153,7 +153,7 @@ function AdminApprovalsContent() {
                 {/* Header */}
                 <button
                   onClick={() =>
-                    setExpandedId(expandedId === request.id ? null : request.id)
+                    setExpandedId(expandedId === request.id ? null : (request.id || null))
                   }
                   className="w-full p-6 hover:bg-gray-50 transition-colors text-left flex items-center justify-between"
                 >
@@ -297,7 +297,7 @@ function AdminApprovalsContent() {
                             {processing === request.id ? 'Aprobando...' : 'Aprobar'}
                           </button>
                           <button
-                            onClick={() => setExpandedId(`reject-${request.id}`)}
+                            onClick={() => setExpandedId(request.id ? `reject-${request.id}` : null)}
                             className="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors font-semibold flex items-center justify-center gap-2"
                           >
                             <XCircle className="w-5 h-5" />
@@ -335,7 +335,7 @@ function AdminApprovalsContent() {
                               </button>
                               <button
                                 onClick={() =>
-                                  setExpandedId(request.id)
+                                  setExpandedId(request.id || null)
                                 }
                                 className="flex-1 bg-gray-300 text-gray-900 py-2 rounded-lg hover:bg-gray-400 transition-colors font-semibold"
                               >
