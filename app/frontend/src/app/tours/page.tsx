@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ModernCard } from '../../components/ui/modern-card';
+import { Header } from '../../components/header';
+import { SearchFilter, FilterState } from '../../components/search-filter';
 import { Star, Clock, Calendar, MapPin, Users, Camera, Mountain, Waves } from 'lucide-react';
 
 interface Tour {
@@ -152,12 +154,21 @@ const getCategoryIcon = (category: string) => {
 
 export default function Tours() {
   const [tours, setTours] = useState<Tour[]>([]);
+  const [filteredTours, setFilteredTours] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
   const [, forceUpdate] = useState(0);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [userEmail, setUserEmail] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<FilterState>({
+    category: null,
+    difficulty: null,
+    minPrice: null,
+    maxPrice: null,
+    minRating: null,
+  });
   // Replace the auth lines
   // const { user } = useAuth(); // Get user from context
 
@@ -178,6 +189,47 @@ export default function Tours() {
     setTours(mockTours);
     setLoading(false);
   }, []);
+
+  // Filter tours based on search and filters
+  useEffect(() => {
+    let result = [...tours];
+
+    // Apply search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(tour =>
+        tour.title.toLowerCase().includes(query) ||
+        tour.description.toLowerCase().includes(query) ||
+        tour.location.toLowerCase().includes(query) ||
+        tour.guide.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply category filter
+    if (filters.category) {
+      result = result.filter(tour => tour.category === filters.category);
+    }
+
+    // Apply difficulty filter
+    if (filters.difficulty) {
+      result = result.filter(tour => tour.difficulty === filters.difficulty);
+    }
+
+    // Apply price filter
+    if (filters.minPrice !== null) {
+      result = result.filter(tour => tour.price >= filters.minPrice!);
+    }
+    if (filters.maxPrice !== null) {
+      result = result.filter(tour => tour.price <= filters.maxPrice!);
+    }
+
+    // Apply rating filter
+    if (filters.minRating !== null) {
+      result = result.filter(tour => tour.rating >= filters.minRating!);
+    }
+
+    setFilteredTours(result);
+  }, [searchQuery, filters, tours]);
 
   // Update component every minute to refresh countdown
   useEffect(() => {
@@ -280,31 +332,19 @@ export default function Tours() {
     }
   };
 
+  const categories = [
+    { id: 'adventure', label: '🏜️ Aventura' },
+    { id: 'stargazing', label: '⭐ Estrellas' },
+    { id: 'hiking', label: '⛰️ Senderismo' },
+    { id: 'photography', label: '📸 Fotografía' },
+    { id: 'cycling', label: '🚴 Ciclismo' },
+    { id: 'cultural', label: '🏛️ Cultural' },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50/30">
-      {/* Modern Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <Link href="/" className="text-2xl font-bold text-atacama-orange cursor-pointer">
-              Santurist
-            </Link>
-
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">Inicio</Link>
-              <Link href="/tours" className="text-atacama-orange font-bold transition-colors">¿Qué Hacer?</Link>
-              <Link href="/eat" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">¿Qué Comer?</Link>
-              <Link href="/services" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">Servicios</Link>
-            </nav>
-
-            <div className="flex items-center space-x-4">
-              <button className="bg-atacama-orange text-white px-6 py-2 rounded-full hover:bg-atacama-orange/90 transition-colors font-medium">
-                Iniciar Sesión
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Header */}
+      <Header />
 
       <main className="pt-20">
         {/* Hero Section */}
@@ -352,6 +392,35 @@ export default function Tours() {
               Vive experiencias inolvidables en el desierto de Atacama con guías expertos locales. Cada aventura está diseñada para conectarte profundamente con la magia del desierto.
             </motion.p>
 
+            {/* Search and Filters */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="mb-12 max-w-4xl mx-auto"
+            >
+              <SearchFilter
+                onSearch={setSearchQuery}
+                onFilterChange={setFilters}
+                categories={categories}
+                showDifficultyFilter={true}
+                showPriceFilter={true}
+                showRatingFilter={true}
+              />
+            </motion.div>
+
+            {/* Results Count */}
+            {!loading && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center text-gray-600 mb-8"
+              >
+                Mostrando <span className="font-semibold">{filteredTours.length}</span> de <span className="font-semibold">{tours.length}</span> tours
+              </motion.p>
+            )}
+
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -365,7 +434,7 @@ export default function Tours() {
                   </ModernCard>
                 ))}
               </div>
-            ) : (
+            ) : filteredTours.length > 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -373,7 +442,7 @@ export default function Tours() {
                 viewport={{ once: true }}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
               >
-                {tours.map((tour, index) => {
+                {filteredTours.map((tour, index) => {
                   const CategoryIcon = getCategoryIcon(tour.category);
                   const isTourUpcoming = isUpcoming(tour.date);
 
@@ -508,6 +577,30 @@ export default function Tours() {
                     </motion.div>
                   );
                 })}
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center py-12"
+              >
+                <p className="text-2xl font-bold text-gray-700 mb-4">No hay tours disponibles</p>
+                <p className="text-gray-600 mb-6">Intenta ajustar tus filtros o búsqueda</p>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setFilters({
+                      category: null,
+                      difficulty: null,
+                      minPrice: null,
+                      maxPrice: null,
+                      minRating: null,
+                    });
+                  }}
+                  className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium"
+                >
+                  Limpiar Filtros
+                </button>
               </motion.div>
             )}
 

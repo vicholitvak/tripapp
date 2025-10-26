@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ModernCard } from '../components/ui/modern-card';
+import { Header } from '../components/header';
 import {
   Star,
   Heart,
@@ -81,29 +82,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50/30">
-      {/* Modern Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="text-2xl font-bold text-atacama-orange cursor-pointer">
-              Santurist
-            </div>
-
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-atacama-orange font-bold transition-colors">Inicio</Link>
-              <Link href="/tours" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">¿Qué Hacer?</Link>
-              <Link href="/eat" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">¿Qué Comer?</Link>
-              <Link href="/services" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">Servicios</Link>
-            </nav>
-
-            <div className="flex items-center space-x-4">
-              <button className="bg-atacama-orange text-white px-6 py-2 rounded-full hover:bg-atacama-orange/90 transition-colors font-medium">
-                Iniciar Sesión
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Header */}
+      <Header />
 
       <main>
         {/* Hero Section */}

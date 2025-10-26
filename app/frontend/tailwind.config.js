@@ -5,4 +5,11 @@ export default {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  theme: {
+    extend: {
+      colors: {
+        'atacama-orange': '#F97316',
+      },
+    },
+  },
 }
