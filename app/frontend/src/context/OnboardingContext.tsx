@@ -63,6 +63,20 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
       const existingProvider = await ProviderService.getByUserId(user.uid);
       if (existingProvider) {
         setProvider(existingProvider);
+
+        // If provider was claimed from mock (has personalInfo/businessInfo but no progress or incomplete progress)
+        // Pre-fill draftData with provider data
+        if (existingProvider.accountType === 'real' &&
+            (!existingProgress || existingProgress.completedSteps.length === 0)) {
+          const mockData: OnboardingProgress['draftData'] = {
+            type: existingProvider.type,
+            personalInfo: existingProvider.personalInfo,
+            businessInfo: existingProvider.businessInfo,
+            services: existingProvider.services || [],
+          };
+          setDraftData(mockData);
+          console.log('✅ Pre-filled onboarding with claimed provider data');
+        }
       }
     } catch (error) {
       console.error('Error loading progress:', error);

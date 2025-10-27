@@ -2,7 +2,14 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { auth, db } from '../lib/firebase';
-import { onAuthStateChanged, User, signOut, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import {
+  onAuthStateChanged,
+  User,
+  signOut,
+  signInWithPopup,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword
+} from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface AuthContextType {
@@ -11,6 +18,7 @@ interface AuthContextType {
   loading: boolean;
   logout: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,7 +26,8 @@ const AuthContext = createContext<AuthContextType>({
   role: null,
   loading: true,
   logout: async () => {},
-  signInWithGoogle: async () => {}
+  signInWithGoogle: async () => {},
+  signUp: async () => {}
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -135,8 +144,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const signUp = async (email: string, password: string) => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      // User state will be updated by onAuthStateChanged
+    } catch (error) {
+      console.error('Error creating account:', error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, role, loading, logout, signInWithGoogle }}>
+    <AuthContext.Provider value={{ user, role, loading, logout, signInWithGoogle, signUp }}>
       {children}
     </AuthContext.Provider>
   );
