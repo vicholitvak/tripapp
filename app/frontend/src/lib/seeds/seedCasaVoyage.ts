@@ -91,11 +91,12 @@ export async function seedCasaVoyage() {
       description: 'Un oasis en medio del desierto de Atacama. Casa Voyage es un hostel diseñado por y para viajeros, donde el arte, la ecología, la cultura y la alegría se integran. Un lugar amigable que invita a quedarse, compartir y participar en diferentes actividades y talleres. Ofrecemos habitaciones compartidas temáticas, habitaciones privadas y domos geodésicos ecológicos.',
       shortDescription: 'Hostel vibrante con domos geodésicos, piscina, arte y espacios de encuentro',
       photos: [
-        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop', // Hostel exterior
-        'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop', // Habitación hostel
-        'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop', // Domo glamping
-        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop', // Piscina
-        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&h=600&fit=crop', // Zona común
+        'https://casavoyagehostel.com/wp-content/uploads/2024/06/casa-voyage-hostel-atacama-1400x690.jpg', // Hostel exterior
+        'https://casavoyagehostel.com/wp-content/uploads/2024/06/domos.casa_.voyage.hostel-1600x690.jpg', // Domos geodésicos
+        'https://casavoyagehostel.com/wp-content/uploads/2024/06/hab-compartida-lascar-h1-1024x683.jpg', // Habitación compartida
+        'https://casavoyagehostel.com/wp-content/uploads/2024/06/casa-voyage-hostel-atacama-chile-891x595.jpg', // Vista del hostel
+        'https://casavoyagehostel.com/wp-content/uploads/2024/06/cvh13.jpg', // Instalaciones
+        'https://casavoyagehostel.com/wp-content/uploads/2020/12/laguna-atacama-casa-voyage-1-1280x690.jpg', // Laguna cercana
       ],
 
       // Híbrido: Hostel + Domos
@@ -120,8 +121,8 @@ export async function seedCasaVoyage() {
             monthlyDiscount: 20,
           },
           photos: [
-            'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600&h=400&fit=crop',
-            'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=400&fit=crop',
+            'https://casavoyagehostel.com/wp-content/uploads/2024/06/hab-compartida-lascar-h1-1024x683.jpg',
+            'https://casavoyagehostel.com/wp-content/uploads/2024/06/cvh13.jpg',
           ],
           amenities: ['Enchufe individual', 'Lámpara', 'Cortina privacidad', 'Casillero', 'Ropa de cama'],
         },
@@ -144,7 +145,7 @@ export async function seedCasaVoyage() {
             monthlyDiscount: 20,
           },
           photos: [
-            'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop',
+            'https://casavoyagehostel.com/wp-content/uploads/2024/06/casa-voyage-hostel-atacama-chile-891x595.jpg',
           ],
           amenities: ['Cama matrimonial', 'Ropa de cama', 'Privacidad', 'Ventana'],
         },
@@ -167,8 +168,8 @@ export async function seedCasaVoyage() {
             monthlyDiscount: 20,
           },
           photos: [
-            'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=400&fit=crop',
-            'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=600&h=400&fit=crop',
+            'https://casavoyagehostel.com/wp-content/uploads/2024/06/domos.casa_.voyage.hostel-1600x690.jpg',
+            'https://casavoyagehostel.com/wp-content/uploads/2024/06/casa-voyage-hostel-atacama-1400x690.jpg',
           ],
           amenities: ['Construcción ecológica', 'Ventanas panorámicas', 'Experiencia única', 'Ropa de cama'],
         },

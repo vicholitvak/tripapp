@@ -54,9 +54,7 @@ export default function MockReviewPage() {
 
     try {
       // Update status to pending (ready for admin approval)
-      await ProviderService.updateProvider(mockProvider.id!, {
-        status: 'pending'
-      });
+      await ProviderService.updateStatus(mockProvider.id!, 'pending');
 
       // Redirect to pending approval page
       router.push('/onboarding/pending');
