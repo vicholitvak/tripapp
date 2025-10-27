@@ -5,6 +5,8 @@ import { useAuth } from '@/context/AuthContext';
 import { MockProviderService } from '@/lib/services/mockProviderService';
 import { MockConversionLog, ProviderType } from '@/types/provider';
 import { Timestamp } from 'firebase/firestore';
+import AdminNav from '@/components/admin/AdminNav';
+import NotificationBell from '@/components/notifications/NotificationBell';
 import {
   Activity,
   TrendingUp,
@@ -201,17 +203,24 @@ export default function ConversionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Dashboard de Conversiones
-          </h1>
-          <p className="text-gray-600">
-            Monitorea las conversiones de mock providers a proveedores reales
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Admin Navigation */}
+      <AdminNav />
+
+      <div className="py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="mb-8 flex items-start justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Dashboard de Conversiones
+              </h1>
+              <p className="text-gray-600">
+                Monitorea las conversiones de mock providers a proveedores reales
+              </p>
+            </div>
+            <NotificationBell />
+          </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -572,6 +581,7 @@ export default function ConversionsPage() {
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );
