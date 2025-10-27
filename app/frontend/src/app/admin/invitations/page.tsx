@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { InvitationService } from '@/lib/services/invitationService';
-import { ProviderType } from '@/types/provider';
-import { Plus, Copy, CheckCircle, AlertCircle } from 'lucide-react';
+import { MockProviderService } from '@/lib/services/mockProviderService';
+import { Provider, ProviderType, Invitation } from '@/types/provider';
+import { Plus, Copy, CheckCircle, AlertCircle, Link as LinkIcon, FileText, Clock, Mail } from 'lucide-react';
 
 const PROVIDER_TYPES: { value: ProviderType; label: string }[] = [
   { value: 'cook', label: 'Cocinero' },
@@ -18,6 +19,10 @@ const PROVIDER_TYPES: { value: ProviderType; label: string }[] = [
 
 export default function AdminInvitationsPage() {
   const { user, role } = useAuth();
+  const [invitationMode, setInvitationMode] = useState<'new' | 'link-mock'>('new');
+  const [availableMocks, setAvailableMocks] = useState<Provider[]>([]);
+  const [selectedMockId, setSelectedMockId] = useState<string | null>(null);
+  const [existingInvitations, setExistingInvitations] = useState<Invitation[]>([]);
   const [formData, setFormData] = useState({
     recipientName: '',
     businessName: '',
@@ -30,6 +35,59 @@ export default function AdminInvitationsPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [createdCode, setCreatedCode] = useState<string | null>(null);
   const [copiedCode, setCopiedCode] = useState(false);
+
+  // Load mocks and invitations
+  useEffect(() => {
+    if (user && role === 'admin') {
+      loadData();
+    }
+  }, [user, role]);
+
+  const loadData = async () => {
+    try {
+      const [mocks, invitations] = await Promise.all([
+        MockProviderService.getAllMocks(),
+        InvitationService.listAll(),
+      ]);
+
+      // Filter mocks without invitations
+      const mocksWithoutInvitation = mocks.filter(m => !m.linkedInvitationId && !m.claimedAt);
+      setAvailableMocks(mocksWithoutInvitation);
+      setExistingInvitations(invitations);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  };
+
+  const handleMockSelect = (mockId: string) => {
+    const mock = availableMocks.find(m => m.id === mockId);
+    if (!mock) return;
+
+    setSelectedMockId(mockId);
+    setFormData({
+      recipientName: mock.personalInfo.displayName,
+      businessName: mock.businessInfo.name,
+      category: mock.businessInfo.category,
+      email: mock.personalInfo.email,
+      type: mock.type,
+      customMessage: '',
+    });
+  };
+
+  const handleModeChange = (mode: 'new' | 'link-mock') => {
+    setInvitationMode(mode);
+    if (mode === 'new') {
+      setSelectedMockId(null);
+      setFormData({
+        recipientName: '',
+        businessName: '',
+        category: '',
+        email: '',
+        type: 'cook',
+        customMessage: '',
+      });
+    }
+  };
 
   // Verificar si es admin
   if (!user || role !== 'admin') {
@@ -50,6 +108,8 @@ export default function AdminInvitationsPage() {
     setMessage(null);
 
     try {
+      const mockProviderId = invitationMode === 'link-mock' ? selectedMockId || undefined : undefined;
+
       const invitation = await InvitationService.createInvitation(
         formData.recipientName,
         formData.businessName,
@@ -57,14 +117,16 @@ export default function AdminInvitationsPage() {
         formData.email,
         formData.type,
         user.uid,
-        undefined, // mockProviderId
+        mockProviderId,
         formData.customMessage || undefined
       );
 
       setCreatedCode(invitation.code);
       setMessage({
         type: 'success',
-        text: 'Invitación creada exitosamente',
+        text: mockProviderId
+          ? 'Invitación creada y vinculada al mock exitosamente'
+          : 'Invitación creada exitosamente',
       });
 
       // Resetear formulario
@@ -76,6 +138,10 @@ export default function AdminInvitationsPage() {
         type: 'cook',
         customMessage: '',
       });
+      setSelectedMockId(null);
+
+      // Reload data
+      loadData();
     } catch (error) {
       console.error('Error creating invitation:', error);
       setMessage({
@@ -98,9 +164,75 @@ export default function AdminInvitationsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Crear Invitación</h1>
           <p className="text-gray-600 mb-8">Genera una invitación personalizada para un nuevo proveedor</p>
+
+          {/* Mode Toggle */}
+          <div className="mb-8 flex gap-4">
+            <button
+              onClick={() => handleModeChange('new')}
+              className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-colors ${
+                invitationMode === 'new'
+                  ? 'bg-orange-600 text-white'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              <FileText className="w-5 h-5 inline-block mr-2" />
+              Nueva Invitación
+            </button>
+            <button
+              onClick={() => handleModeChange('link-mock')}
+              className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-colors ${
+                invitationMode === 'link-mock'
+                  ? 'bg-orange-600 text-white'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              <LinkIcon className="w-5 h-5 inline-block mr-2" />
+              Vincular Mock ({availableMocks.length})
+            </button>
+          </div>
+
+          {/* Mock Selection (only in link-mock mode) */}
+          {invitationMode === 'link-mock' && (
+            <div className="mb-8 bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">
+                Seleccionar Mock Provider
+              </h3>
+              {availableMocks.length === 0 ? (
+                <p className="text-gray-600">
+                  No hay mocks disponibles sin invitación.
+                  <a href="/admin/mock-providers" className="text-orange-600 hover:underline ml-1">
+                    Crear nuevo mock
+                  </a>
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {availableMocks.map((mock) => (
+                    <button
+                      key={mock.id}
+                      onClick={() => handleMockSelect(mock.id!)}
+                      className={`text-left p-4 rounded-lg border-2 transition-colors ${
+                        selectedMockId === mock.id
+                          ? 'border-orange-600 bg-orange-50'
+                          : 'border-gray-200 hover:border-orange-300'
+                      }`}
+                    >
+                      <h4 className="font-semibold text-gray-900">{mock.businessInfo.name}</h4>
+                      <p className="text-sm text-gray-600">{mock.personalInfo.displayName}</p>
+                      <p className="text-xs text-gray-500 mt-1">{mock.businessInfo.category}</p>
+                      {mock.featured && (
+                        <span className="inline-block mt-2 px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">
+                          Destacado
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {message && (
             <div
@@ -291,6 +423,57 @@ export default function AdminInvitationsPage() {
               </div>
             </div>
           </div>
+
+          {/* Existing Invitations */}
+          {existingInvitations.length > 0 && (
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Invitaciones Recientes ({existingInvitations.length})
+              </h2>
+              <div className="space-y-4">
+                {existingInvitations.slice(0, 5).map((invitation) => (
+                  <div
+                    key={invitation.id}
+                    className="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900">
+                          {invitation.businessName}
+                        </h3>
+                        <p className="text-sm text-gray-600">{invitation.recipientName}</p>
+                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <Mail className="w-4 h-4" />
+                            {invitation.email}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            {invitation.createdAt instanceof Date
+                              ? invitation.createdAt.toLocaleDateString()
+                              : new Date(invitation.createdAt.toDate()).toLocaleDateString()}
+                          </span>
+                        </div>
+                        {invitation.mockProviderId && (
+                          <span className="inline-block mt-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+                            Vinculado a Mock
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <code className="px-3 py-1 bg-gray-100 rounded text-sm font-mono">
+                          {invitation.code}
+                        </code>
+                        <p className="text-xs text-gray-500 mt-2 capitalize">
+                          {invitation.status}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
