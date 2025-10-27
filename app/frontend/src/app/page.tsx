@@ -23,7 +23,7 @@ export default function Home() {
       title: '🏜️ ¿Qué Hacer?',
       subtitle: 'Experiencias inolvidables',
       description: 'Descubre tours únicos y aventuras en el desierto de Atacama con guías expertos locales.',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop',
+      image: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=600&h=400&fit=crop', // Volcán Licancabur
       href: '/tours',
       color: 'from-orange-500 to-red-500',
       stats: '15+ Tours disponibles'
@@ -33,7 +33,7 @@ export default function Home() {
       title: '🍽️ ¿Qué Comer?',
       subtitle: 'Gastronomía local',
       description: 'Disfruta de platos tradicionales preparados por cocineros locales con ingredientes frescos.',
-      image: 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=600&h=400&fit=crop',
+      image: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=600&h=400&fit=crop', // Comida chilena casera
       href: '/eat',
       color: 'from-red-500 to-pink-500',
       stats: '50+ Cocineros activos'
@@ -42,18 +42,28 @@ export default function Home() {
       id: 'services',
       title: '🚗 Servicios',
       subtitle: 'Transporte y más',
-      description: 'Taxis locales, alquiler de bicicletas y transfers premium al aeropuerto.',
-      image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&h=400&fit=crop',
+      description: 'Taxis locales, alquiler de bicicletas, transfers y artesanías de la zona.',
+      image: 'https://images.unsplash.com/photo-1452570053594-1b985d6ea890?w=600&h=400&fit=crop', // Transfer/viaje
       href: '/services',
       color: 'from-blue-500 to-cyan-500',
       stats: '9+ Proveedores verificados'
+    },
+    {
+      id: 'stay',
+      title: '🏕️ ¿Dónde Quedarse?',
+      subtitle: 'Alojamiento único',
+      description: 'Descubre glampings, campings y lugares especiales para una experiencia auténtica en el desierto.',
+      image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=400&fit=crop', // Glamping/camping
+      href: '/stay',
+      color: 'from-teal-500 to-cyan-500',
+      stats: '20+ Alojamientos disponibles'
     },
     {
       id: 'marketplace',
       title: '🏪 Tienda',
       subtitle: 'Artesanías y productos locales',
       description: 'Descubre joyería, cerámica, textiles y productos artesanales hechos por manos locales.',
-      image: 'https://images.unsplash.com/photo-1564368275-8d0e4c2470d2?w=600&h=400&fit=crop',
+      image: 'https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=600&h=400&fit=crop', // Joyería artesanal
       href: '/marketplace',
       color: 'from-purple-500 to-pink-500',
       stats: '100+ Productos disponibles'
@@ -120,7 +130,7 @@ export default function Home() {
                 🏜️ Bienvenido a San Pedro de Atacama
               </h1>
               <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
-                Tu compañero esencial para vivir la magia del desierto. Todo lo que necesitas para una experiencia inolvidable en el corazón del Atacama.
+                Tu compañero esencial para vivir la magia del desierto. Tours, gastronomía local, alojamiento único y más. Todo lo que necesitas en un solo lugar.
               </p>
               <motion.div
                 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
@@ -166,13 +176,13 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto"
             >
-              Una app completa para tu viaje al desierto. Encuentra experiencias, comida local y servicios de transporte todo en un solo lugar.
+              Una app completa para tu viaje al desierto. Tours, gastronomía, alojamiento, servicios y artesanías locales, todo en un solo lugar.
             </motion.p>
 
             <motion.div
               variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8"
             >
               {services.map((service, index) => (
                 <motion.div
@@ -351,11 +361,12 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4 text-white">¿Qué Hacer?</h4>
+              <h4 className="font-semibold mb-4 text-white">Explora</h4>
               <ul className="space-y-2 text-gray-300">
                 <li><Link href="/tours" className="hover:text-orange-400 transition-colors">Tours Guiados</Link></li>
                 <li><Link href="/eat" className="hover:text-orange-400 transition-colors">¿Qué Comer?</Link></li>
-                <li><Link href="/services" className="hover:text-orange-400 transition-colors">Servicios</Link></li>
+                <li><Link href="/stay" className="hover:text-orange-400 transition-colors">¿Dónde Quedarse?</Link></li>
+                <li><Link href="/marketplace" className="hover:text-orange-400 transition-colors">Tienda</Link></li>
               </ul>
             </div>
             <div>
