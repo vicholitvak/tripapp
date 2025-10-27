@@ -2,733 +2,448 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ModernCard } from '../../components/ui/modern-card';
+import { useRouter } from 'next/navigation';
 import { Header } from '../../components/header';
-import { SearchFilter, FilterState } from '../../components/search-filter';
-import { Star, Clock, Calendar, MapPin, Users, Camera, Mountain, Waves } from 'lucide-react';
+import {
+  Star,
+  Clock,
+  Calendar,
+  MapPin,
+  Users,
+  TrendingDown,
+  AlertCircle,
+  CheckCircle,
+  Zap,
+  Gift,
+  Filter,
+  Search,
+} from 'lucide-react';
+import { MOCK_TOURS } from '@/lib/seeds/toursSeed';
+import { Tour, TourInstance } from '@/types/tours';
+import { TourCategory } from '@/types/marketplace';
 
-interface Tour {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  category: string;
-  location: string;
-  image: string;
-  duration: string;
-  date: string;
-  time: string;
-  capacity: number;
-  rating: number;
-  isPromotional?: boolean;
-  isUpcoming?: boolean;
-  difficulty: 'Fácil' | 'Medio' | 'Difícil';
-  guide: string;
-}
-
-// Mock tour data - replace with API data later
-const mockTours: Tour[] = [
-  {
-    id: '1',
-    title: 'Tour Valle de la Luna',
-    description: 'Explora las formaciones geológicas más espectaculares del mundo. Camina entre rocas de colores vibrantes, visita las icónicas Tres Marías y disfruta del atardecer en el Valle de la Muerte. Una experiencia única que te transportará a otro planeta. Incluye transporte desde San Pedro y refrigerio.',
-    price: 45000,
-    category: 'adventure',
-    location: 'San Pedro de Atacama',
-    image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=300&fit=crop',
-    duration: '4 horas',
-    date: '2024-09-26',
-    time: '09:00',
-    capacity: 12,
-    rating: 4.9,
-    isUpcoming: true,
-    difficulty: 'Medio',
-    guide: 'María González'
-  },
-  {
-    id: '2',
-    title: 'Observación de Estrellas Premium',
-    description: 'Descubre la Vía Láctea en su máxima expresión bajo el cielo más claro del mundo. Ubicado a 2,400m de altitud, nuestro observatorio cuenta con telescopios profesionales y astrónomos certificados. Experiencia que incluye cócteles y snacks bajo las estrellas. Disponible todas las noches.',
-    price: 35000,
-    category: 'stargazing',
-    location: 'Observatorio San Pedro',
-    image: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&h=300&fit=crop',
-    duration: '3 horas',
-    date: '2024-09-25',
-    time: '16:00',
-    capacity: 8,
-    rating: 4.8,
-    isPromotional: true,
-    difficulty: 'Fácil',
-    guide: 'Carlos Rodríguez'
-  },
-  {
-    id: '3',
-    title: 'Ascenso al Licancabur - Volcán Sagrado',
-    description: 'Conquista a 5,960m el volcán más emblemático del Atacama. Este ascenso sagrado para los pueblos originarios ofrece vistas de 360° de la cordillera. Salida de madrugada, desayuno en la cumbre con vista a Bolivia y Argentina. Experiencia moderadamente exigente pero accesible. Incluye aclimatación previa.',
-    price: 85000,
-    category: 'hiking',
-    location: 'Licancabur Volcano',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
-    duration: '8 horas',
-    date: '2025-01-20',
-    time: '06:00',
-    capacity: 6,
-    rating: 5.0,
-    difficulty: 'Difícil',
-    guide: 'Pedro Silva'
-  },
-  {
-    id: '4',
-    title: 'Fotografía Nocturna - Maestría Astrofotográfica',
-    description: 'Aprende técnicas profesionales de fotografía astronómica con los expertos locales. Trabajaremos en El Tatio geysers con equipos de última generación. Incluye clase magistral, montaje de trípodes, composición con la Vía Láctea y edición básica. Ideal para fotógrafos principiantes a avanzados. Todas tus fotos en alta resolución.',
-    price: 55000,
-    category: 'photography',
-    location: 'El Tatio Geysers',
-    image: 'https://images.unsplash.com/photo-1444080748397-f442aa95c3e5?w=400&h=300&fit=crop',
-    duration: '5 horas',
-    date: '2025-01-18',
-    time: '22:00',
-    capacity: 10,
-    rating: 4.7,
-    isPromotional: true,
-    difficulty: 'Medio',
-    guide: 'Ana María'
-  },
-  {
-    id: '5',
-    title: 'Bicicleta por el Desierto - Ruta Oasis',
-    description: 'Recorre paisajes de ensueño en bicicleta de montaña. Visita oasis escondidos, pueblos ancestrales y formaciones rocosas únicas. Incluye picnic típico del Atacama, hidratación constante y paradas fotográficas. Ruta segura y manejable para todos los niveles. Bicicletas de primera calidad y cascos incluidos.',
-    price: 32000,
-    category: 'cycling',
-    location: 'Ruta del Desierto',
-    image: 'https://images.unsplash.com/photo-1578610344328-b6b9b7b9b9b9?w=400&h=300&fit=crop',
-    duration: '6 horas',
-    date: '2025-01-17',
-    time: '09:00',
-    capacity: 15,
-    rating: 4.6,
-    difficulty: 'Medio',
-    guide: 'Juan Pérez'
-  },
-  {
-    id: '6',
-    title: 'Experiencia Cultural Aymara - Vivencia Ancestral',
-    description: 'Sumérgete en la cosmovisión aymara. Visita un hogar tradicional, aprende sobre textiles ancestrales, la agricultura desértica y espiritualidad prehispánica. Comparte bebidas tradicionales (chicha y mote) con la familia anfitriona. Guía bilingüe indígena con 30+ años de experiencia. Contribuye directamente a la comunidad local.',
-    price: 28000,
-    category: 'cultural',
-    location: 'Pueblo Aymara Tradicional',
-    image: 'https://images.unsplash.com/photo-1529471260571-675d2a46ae6e?w=400&h=300&fit=crop',
-    duration: '3 horas',
-    date: '2025-01-19',
-    time: '14:00',
-    capacity: 20,
-    rating: 4.9,
-    isUpcoming: true,
-    difficulty: 'Fácil',
-    guide: 'Rosa Mamani'
-  }
+// Categorías de tours
+const TOUR_CATEGORIES = [
+  { value: 'all', label: 'Todos', icon: '🌟' },
+  { value: 'astronomico', label: 'Astronómico', icon: '🌌' },
+  { value: 'geisers_tatio', label: 'Géisers del Tatio', icon: '🌋' },
+  { value: 'lagunas_altiplanicas', label: 'Lagunas', icon: '🏔️' },
+  { value: 'valle_luna_muerte', label: 'Valle de la Luna', icon: '🌙' },
+  { value: 'salar_atacama', label: 'Salar de Atacama', icon: '🧂' },
+  { value: 'sandboarding', label: 'Sandboarding', icon: '🏂' },
+  { value: 'trekking_aventura', label: 'Trekking', icon: '🥾' },
 ];
 
-const getDifficultyColor = (difficulty: string) => {
-  switch (difficulty) {
-    case 'Fácil': return 'bg-green-100 text-green-800';
-    case 'Medio': return 'bg-yellow-100 text-yellow-800';
-    case 'Difícil': return 'bg-red-100 text-red-800';
-    default: return 'bg-gray-100 text-gray-800';
-  }
-};
+const DIFFICULTY_FILTERS = [
+  { value: 'all', label: 'Todas' },
+  { value: 'facil', label: 'Fácil' },
+  { value: 'moderado', label: 'Moderado' },
+  { value: 'dificil', label: 'Difícil' },
+];
 
-const getCategoryIcon = (category: string) => {
-  switch (category) {
-    case 'adventure': return Mountain;
-    case 'stargazing': return Star;
-    case 'hiking': return Mountain;
-    case 'photography': return Camera;
-    case 'cycling': return Waves;
-    case 'cultural': return Users;
-    default: return Mountain;
-  }
-};
-
-export default function Tours() {
-  const [tours, setTours] = useState<Tour[]>([]);
-  const [filteredTours, setFilteredTours] = useState<Tour[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [, forceUpdate] = useState(0);
-  const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [numberOfPeople, setNumberOfPeople] = useState(1);
-  const [userEmail, setUserEmail] = useState('');
+export default function ToursPage() {
+  const router = useRouter();
+  const [tours, setTours] = useState(MOCK_TOURS);
+  const [filteredTours, setFilteredTours] = useState(MOCK_TOURS);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState<FilterState>({
-    category: null,
-    difficulty: null,
-    minPrice: null,
-    maxPrice: null,
-    minRating: null,
-  });
-  // Replace the auth lines
-  // const { user } = useAuth(); // Get user from context
-
-  // Mock user for payment testing (remove in production)
-  const mockUser = { uid: 'mock-user-id', email: 'test@example.com' };
-  const user = mockUser; // Use mock for now
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    // if (user) {  // Comment out real logic
-      setUserEmail(user.email || '');
-    // }
-  }, [user]);  // Keep dependency
+    applyFilters();
+  }, [selectedCategory, selectedDifficulty, searchQuery]);
 
-  useEffect(() => {
-    // For now, use mock data since backend is not configured
-    // TODO: Enable API fetch when backend is properly configured
-    console.log('Using mock tour data - backend not available');
-    setTours(mockTours);
-    setLoading(false);
-  }, []);
+  const applyFilters = () => {
+    let filtered = tours;
 
-  // Filter tours based on search and filters
-  useEffect(() => {
-    let result = [...tours];
+    // Filtro por categoría
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(tour => tour.category === selectedCategory);
+    }
 
-    // Apply search query
+    // Filtro por dificultad
+    if (selectedDifficulty !== 'all') {
+      filtered = filtered.filter(tour => tour.difficulty === selectedDifficulty);
+    }
+
+    // Filtro por búsqueda
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      result = result.filter(tour =>
-        tour.title.toLowerCase().includes(query) ||
-        tour.description.toLowerCase().includes(query) ||
-        tour.location.toLowerCase().includes(query) ||
-        tour.guide.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        tour =>
+          tour.title.toLowerCase().includes(query) ||
+          tour.description.toLowerCase().includes(query)
       );
     }
 
-    // Apply category filter
-    if (filters.category) {
-      result = result.filter(tour => tour.category === filters.category);
-    }
-
-    // Apply difficulty filter
-    if (filters.difficulty) {
-      result = result.filter(tour => tour.difficulty === filters.difficulty);
-    }
-
-    // Apply price filter
-    if (filters.minPrice !== null) {
-      result = result.filter(tour => tour.price >= filters.minPrice!);
-    }
-    if (filters.maxPrice !== null) {
-      result = result.filter(tour => tour.price <= filters.maxPrice!);
-    }
-
-    // Apply rating filter
-    if (filters.minRating !== null) {
-      result = result.filter(tour => tour.rating >= filters.minRating!);
-    }
-
-    setFilteredTours(result);
-  }, [searchQuery, filters, tours]);
-
-  // Update component every minute to refresh countdown
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Force re-render to update countdown timers
-      forceUpdate(prev => prev + 1);
-    }, 60000); // Update every minute
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP'
-    }).format(price);
+    setFilteredTours(filtered);
   };
 
-  const isUpcoming = (date: string) => {
-    const tourDate = new Date(date);
+  // Obtener el badge de estado
+  const getStatusBadge = (instance: TourInstance) => {
+    switch (instance.status) {
+      case 'at_risk':
+        return (
+          <div className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">
+            <Zap className="w-3 h-3" />
+            ¡ÚLTIMOS CUPOS!
+          </div>
+        );
+      case 'almost_full':
+        return (
+          <div className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold">
+            <AlertCircle className="w-3 h-3" />
+            Casi lleno
+          </div>
+        );
+      case 'confirmed':
+        return (
+          <div className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
+            <CheckCircle className="w-3 h-3" />
+            Confirmado
+          </div>
+        );
+      case 'full':
+        return (
+          <div className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-bold">
+            Lleno
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  // Calcular horas hasta el tour
+  const getHoursUntilTour = (date: { toDate?: () => Date } | Date): number => {
     const now = new Date();
-    const diffTime = tourDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 3 && diffDays > 0;
+    const tourDate = (date as { toDate?: () => Date }).toDate ? (date as { toDate: () => Date }).toDate() : new Date(date as Date);
+    const diff = tourDate.getTime() - now.getTime();
+    return Math.max(0, Math.floor(diff / (1000 * 60 * 60)));
   };
 
-  const getTimeUntilTour = (date: string, time: string) => {
-    const tourDateTime = new Date(`${date}T${time}`);
-    const now = new Date();
-    const diffMs = tourDateTime.getTime() - now.getTime();
+  // Obtener el badge de dificultad
+  const getDifficultyBadge = (difficulty: string) => {
+    const colors = {
+      facil: 'bg-green-100 text-green-700',
+      moderado: 'bg-yellow-100 text-yellow-700',
+      dificil: 'bg-red-100 text-red-700',
+      extremo: 'bg-purple-100 text-purple-700',
+    };
 
-    if (diffMs <= 0) {
-      return { text: 'Tour ya comenzó', status: 'past', color: 'text-red-600' };
-    }
+    const labels = {
+      facil: 'Fácil',
+      moderado: 'Moderado',
+      dificil: 'Difícil',
+      extremo: 'Extremo',
+    };
 
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-
-    if (diffDays > 0) {
-      return {
-        text: `Faltan ${diffDays} día${diffDays > 1 ? 's' : ''}`,
-        status: 'future',
-        color: 'text-blue-600'
-      };
-    } else if (diffHours > 0) {
-      return {
-        text: `Faltan ${diffHours} hora${diffHours > 1 ? 's' : ''}`,
-        status: 'soon',
-        color: 'text-orange-600'
-      };
-    } else if (diffMinutes > 0) {
-      return {
-        text: `Faltan ${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''}`,
-        status: 'very-soon',
-        color: 'text-red-600'
-      };
-    } else {
-      return {
-        text: 'Comienza pronto',
-        status: 'now',
-        color: 'text-red-600'
-      };
-    }
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[difficulty as keyof typeof colors]}`}>
+        {labels[difficulty as keyof typeof labels]}
+      </span>
+    );
   };
-
-  // Booking function
-  const handleBookTour = async () => {
-    if (!selectedTour || !userEmail || !user.uid) return;  // Use user.uid
-
-    const totalPrice = selectedTour.price * numberOfPeople;
-
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/bookings/create-payment`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          touristId: user.uid,  // mock uid
-          touristEmail: userEmail,
-          tourId: selectedTour.id,
-          tourTitle: selectedTour.title,
-          tourImage: selectedTour.image,
-          description: selectedTour.description,
-          date: selectedTour.date,
-          numberOfPeople,
-          totalPrice
-        }),
-      });
-
-      if (!response.ok) throw new Error('Error creating payment');
-
-      const data = await response.json();
-      const { paymentUrl } = data;
-
-      // Redirect to Mercado Pago
-      window.location.href = paymentUrl;
-    } catch (error) {
-      console.error('Booking error:', error);
-      alert('Error al procesar la reserva. Intenta de nuevo.');
-    }
-  };
-
-  const categories = [
-    { id: 'adventure', label: '🏜️ Aventura' },
-    { id: 'stargazing', label: '⭐ Estrellas' },
-    { id: 'hiking', label: '⛰️ Senderismo' },
-    { id: 'photography', label: '📸 Fotografía' },
-    { id: 'cycling', label: '🚴 Ciclismo' },
-    { id: 'cultural', label: '🏛️ Cultural' },
-  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50/30">
-      {/* Header */}
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <Header />
 
-      <main className="pt-20">
-        {/* Hero Section */}
-        <motion.section
-          className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-100 via-white to-red-50 overflow-hidden"
-          variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-          initial="hidden"
-          animate="visible"
-        >
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <motion.div
-              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-              transition={{ duration: 0.6 }}
-              className="max-w-4xl mx-auto"
-            >
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                🏜️ ¿Qué Hacer en San Pedro?
-              </h1>
-              <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
-                Descubre experiencias inolvidables en el desierto de Atacama. Tours guiados, aventuras únicas y conexiones culturales que te harán vivir el corazón del desierto.
-              </p>
-            </motion.div>
-          </div>
-        </motion.section>
-
-        {/* Tours Grid */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent"
-            >
-              🌟 Experiencias Inolvidables
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto"
-            >
-              Vive experiencias inolvidables en el desierto de Atacama con guías expertos locales. Cada aventura está diseñada para conectarte profundamente con la magia del desierto.
-            </motion.p>
-
-            {/* Search and Filters */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              viewport={{ once: true }}
-              className="mb-12 max-w-4xl mx-auto"
-            >
-              <SearchFilter
-                onSearch={setSearchQuery}
-                onFilterChange={setFilters}
-                categories={categories}
-                showDifficultyFilter={true}
-                showPriceFilter={true}
-                showRatingFilter={true}
-              />
-            </motion.div>
-
-            {/* Results Count */}
-            {!loading && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center text-gray-600 mb-8"
-              >
-                Mostrando <span className="font-semibold">{filteredTours.length}</span> de <span className="font-semibold">{tours.length}</span> tours
-              </motion.p>
-            )}
-
-            {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <ModernCard key={i} className="animate-pulse">
-                    <div className="h-48 bg-gray-200 rounded-t-lg"></div>
-                    <div className="p-6 space-y-3">
-                      <div className="h-6 bg-gray-200 rounded"></div>
-                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                    </div>
-                  </ModernCard>
-                ))}
-              </div>
-            ) : filteredTours.length > 0 ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                viewport={{ once: true }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-              >
-                {filteredTours.map((tour, index) => {
-                  const CategoryIcon = getCategoryIcon(tour.category);
-                  const isTourUpcoming = isUpcoming(tour.date);
-
-                  return (
-                    <motion.div
-                      key={tour.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: index * 0.1 }}
-                      viewport={{ once: true }}
-                    >
-                      <ModernCard variant="elevated" className="overflow-hidden hover-lift group">
-                        {/* Smart Tags */}
-                        <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
-                          {tour.isPromotional && (
-                            <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                              🔥 OFERTA ESPECIAL
-                            </div>
-                          )}
-                          {tour.isUpcoming && (
-                            <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                              ⚡ PRÓXIMO
-                            </div>
-                          )}
-                          {isTourUpcoming && !tour.isUpcoming && (
-                            <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                              🚀 SALE PRONTO
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Difficulty Badge */}
-                        <div className="absolute top-3 right-3 z-10">
-                          <div className={`text-xs font-medium px-2 py-1 rounded-full ${getDifficultyColor(tour.difficulty)}`}>
-                            {tour.difficulty}
-                          </div>
-                        </div>
-
-                        {/* Tour Image */}
-                        <div className="relative h-48 overflow-hidden">
-                          <img
-                            src={tour.image}
-                            alt={tour.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                          {/* Category Icon Overlay */}
-                          <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm rounded-full p-2">
-                            <CategoryIcon className="w-5 h-5 text-orange-600" />
-                          </div>
-                        </div>
-
-                        {/* Tour Info */}
-                        <div className="p-6">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
-                            {tour.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                            {tour.description}
-                          </p>
-
-                          {/* Rating and Guide */}
-                          <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
-                            <div className="flex items-center space-x-1">
-                              <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                              <span className="font-medium">{tour.rating}</span>
-                            </div>
-                            <span>por {tour.guide}</span>
-                          </div>
-
-                          {/* Time Until Tour */}
-                          <div className="mb-3">
-                            {(() => {
-                              const timeInfo = getTimeUntilTour(tour.date, tour.time);
-                              return (
-                                <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium ${
-                                  timeInfo.status === 'past' ? 'bg-red-100 text-red-800' :
-                                  timeInfo.status === 'very-soon' ? 'bg-red-100 text-red-800' :
-                                  timeInfo.status === 'soon' ? 'bg-orange-100 text-orange-800' :
-                                  'bg-blue-100 text-blue-800'
-                                }`}>
-                                  <Clock className="w-3 h-3" />
-                                  <span>{timeInfo.text}</span>
-                                </div>
-                              );
-                            })()}
-                          </div>
-
-                          {/* Tour Details */}
-                          <div className="grid grid-cols-2 gap-3 text-sm text-gray-600 mb-4">
-                            <div className="flex items-center space-x-1">
-                              <Clock className="w-4 h-4" />
-                              <span>{tour.duration}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Calendar className="w-4 h-4" />
-                              <span>{new Date(tour.date).toLocaleDateString('es-CL')}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <MapPin className="w-4 h-4" />
-                              <span>{tour.location}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Users className="w-4 h-4" />
-                              <span>Máx {tour.capacity}</span>
-                            </div>
-                          </div>
-
-                          {/* Price and Time */}
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center space-x-1">
-                              <Clock className="w-4 h-4 text-orange-600" />
-                              <span className="text-sm text-gray-600">{tour.time}</span>
-                            </div>
-                            <span className="text-2xl font-bold text-orange-600">
-                              {formatPrice(tour.price)}
-                            </span>
-                          </div>
-
-                          {/* Action Button */}
-                          <button
-                            onClick={() => {
-                              setSelectedTour(tour);
-                              setNumberOfPeople(1);
-                              setShowModal(true);
-                            }}
-                            className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 px-4 rounded-lg hover:from-orange-700 hover:to-red-700 transition-all duration-300 font-medium transform hover:scale-105"
-                          >
-                            🎫 Reservar Tour
-                          </button>
-                        </div>
-                      </ModernCard>
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center py-12"
-              >
-                <p className="text-2xl font-bold text-gray-700 mb-4">No hay tours disponibles</p>
-                <p className="text-gray-600 mb-6">Intenta ajustar tus filtros o búsqueda</p>
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setFilters({
-                      category: null,
-                      difficulty: null,
-                      minPrice: null,
-                      maxPrice: null,
-                      minRating: null,
-                    });
-                  }}
-                  className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium"
-                >
-                  Limpiar Filtros
-                </button>
-              </motion.div>
-            )}
-
-            {/* Call to Action */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              viewport={{ once: true }}
-              className="text-center mt-16"
-            >
-              <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-8 max-w-lg mx-auto shadow-lg">
-                <Mountain className="w-12 h-12 text-orange-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  ¿No encuentras tu tour ideal?
-                </h3>
-                <p className="text-gray-600 mb-6 text-sm">
-                  Contáctanos para crear una experiencia personalizada en el desierto de Atacama.
-                </p>
-                <button className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 py-3 rounded-full hover:from-orange-700 hover:to-red-700 transition-all duration-300 font-medium">
-                  Solicitar Tour Personalizado
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-                Santurist
-              </h3>
-              <p className="text-gray-300 leading-relaxed">
-                Tu compañero perfecto para explorar San Pedro de Atacama con experiencias inolvidables.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4 text-white">¿Qué Hacer?</h4>
-              <ul className="space-y-2 text-gray-300">
-                <li><Link href="/tours" className="hover:text-orange-400 transition-colors">Tours Guiados</Link></li>
-                <li><Link href="/eat" className="hover:text-orange-400 transition-colors">¿Qué Comer?</Link></li>
-                <li><Link href="/services" className="hover:text-orange-400 transition-colors">Servicios</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4 text-white">Categorías</h4>
-              <ul className="space-y-2 text-gray-300">
-                <li><Link href="/tours?category=adventure" className="hover:text-orange-400 transition-colors">Aventura</Link></li>
-                <li><Link href="/tours?category=cultural" className="hover:text-orange-400 transition-colors">Cultural</Link></li>
-                <li><Link href="/tours?category=photography" className="hover:text-orange-400 transition-colors">Fotografía</Link></li>
-                <li><Link href="/tours?category=stargazing" className="hover:text-orange-400 transition-colors">Estrellas</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4 text-white">Contacto</h4>
-              <div className="space-y-2 text-gray-300">
-                <p className="flex items-center">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  San Pedro de Atacama, Chile
-                </p>
-                <p>info@santurist.cl</p>
-                <p>+56 9 1234 5678</p>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-gray-700 pt-8 text-center text-gray-300">
-            <p>&copy; 2025 Santurist. Todos los derechos reservados. Hecho con ❤️ en el desierto.</p>
-          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            ¿Qué Hacer en San Pedro de Atacama?
+          </h1>
+          <p className="text-xl text-blue-100 max-w-2xl">
+            Descubre experiencias únicas en el desierto más seco del mundo. Tours con descuentos de último minuto.
+          </p>
         </div>
-      </footer>
+      </div>
 
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
-          >
-            <h2 className="text-2xl font-bold mb-4">Reservar {selectedTour?.title}</h2>
-            <div className="space-y-4 mb-6">
+      {/* Filtros */}
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="container mx-auto px-4 py-4">
+          {/* Búsqueda y toggle filtros */}
+          <div className="flex gap-3 mb-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Buscar tours..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+            >
+              <Filter className="w-5 h-5" />
+              Filtros
+            </button>
+          </div>
+
+          {/* Filtros expandidos */}
+          {showFilters && (
+            <div className="space-y-4 pb-4">
+              {/* Categorías */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Número de Personas</label>
-                <input
-                  type="number"
-                  min="1"
-                  max={selectedTour?.capacity || 20}
-                  value={numberOfPeople}
-                  onChange={(e) => setNumberOfPeople(parseInt(e.target.value))}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Categoría</label>
+                <div className="flex flex-wrap gap-2">
+                  {TOUR_CATEGORIES.map(cat => (
+                    <button
+                      key={cat.value}
+                      onClick={() => setSelectedCategory(cat.value)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        selectedCategory === cat.value
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {cat.icon} {cat.label}
+                    </button>
+                  ))}
+                </div>
               </div>
+
+              {/* Dificultad */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input
-                  type="email"
-                  value={userEmail}
-                  onChange={(e) => setUserEmail(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  required
-                />
-              </div>
-              <div className="text-lg font-semibold text-orange-600">
-                Total: {formatPrice((selectedTour?.price || 0) * numberOfPeople)}
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Dificultad</label>
+                <div className="flex gap-2">
+                  {DIFFICULTY_FILTERS.map(diff => (
+                    <button
+                      key={diff.value}
+                      onClick={() => setSelectedDifficulty(diff.value)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        selectedDifficulty === diff.value
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {diff.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-            <div className="flex space-x-3">
-              <button
-                onClick={() => setShowModal(false)}
-                className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleBookTour}
-                className="flex-1 bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 rounded-lg hover:from-orange-700 hover:to-red-700 transition-all"
-                disabled={!userEmail}
-              >
-                Pagar con Mercado Pago
-              </button>
-            </div>
-          </motion.div>
+          )}
         </div>
-      )}
+      </div>
+
+      {/* Tours Grid */}
+      <div className="container mx-auto px-4 py-12">
+        {filteredTours.length === 0 ? (
+          <div className="text-center py-12">
+            <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              No se encontraron tours
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Intenta con otros filtros o términos de búsqueda
+            </p>
+            <button
+              onClick={() => {
+                setSelectedCategory('all');
+                setSelectedDifficulty('all');
+                setSearchQuery('');
+              }}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Limpiar filtros
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredTours.map(tour => {
+              // Obtener la próxima instancia disponible
+              const nextInstance = tour.instances && tour.instances.length > 0
+                ? tour.instances[0]
+                : null;
+
+              const hoursUntil = nextInstance ? getHoursUntilTour(nextInstance.date) : 0;
+              const hasDiscount = nextInstance?.dynamicPricing?.isActive;
+              const discountPercentage = nextInstance?.dynamicPricing?.discountPercentage || 0;
+
+              return (
+                <div
+                  key={tour.id}
+                  onClick={() => router.push(`/tours/${tour.id}`)}
+                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer group"
+                >
+                  {/* Imagen */}
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={tour.images[0]}
+                      alt={tour.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+
+                    {/* Badge de descuento */}
+                    {hasDiscount && (
+                      <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-2 rounded-lg font-bold shadow-lg animate-pulse">
+                        <div className="flex items-center gap-1">
+                          <TrendingDown className="w-4 h-4" />
+                          -{discountPercentage}%
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Badge de estado */}
+                    {nextInstance && (
+                      <div className="absolute top-3 left-3">
+                        {getStatusBadge(nextInstance)}
+                      </div>
+                    )}
+
+                    {/* Featured badge */}
+                    {tour.featured && (
+                      <div className="absolute bottom-3 left-3 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                        ⭐ Destacado
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Contenido */}
+                  <div className="p-5">
+                    {/* Categoría y dificultad */}
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-blue-600 font-semibold uppercase">
+                        {TOUR_CATEGORIES.find(c => c.value === tour.category)?.label || tour.category}
+                      </span>
+                      {getDifficultyBadge(tour.difficulty)}
+                    </div>
+
+                    {/* Título */}
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                      {tour.title}
+                    </h3>
+
+                    {/* Descripción */}
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                      {tour.description}
+                    </p>
+
+                    {/* Detalles */}
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Clock className="w-4 h-4 text-gray-400" />
+                        Duración: {tour.duration === 'horas' ? '2-4h' : tour.duration === 'medio_dia' ? 'Medio día' : tour.duration === 'dia_completo' ? 'Día completo' : 'Varios días'}
+                      </div>
+
+                      {nextInstance && (
+                        <>
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Calendar className="w-4 h-4 text-gray-400" />
+                            Próxima salida: {(() => {
+                              const date = (nextInstance.date as { toDate?: () => Date }).toDate
+                                ? (nextInstance.date as { toDate: () => Date }).toDate()
+                                : new Date(nextInstance.date as Date);
+                              return date.toLocaleDateString('es-CL', {
+                                weekday: 'short',
+                                month: 'short',
+                                day: 'numeric'
+                              });
+                            })()} {nextInstance.startTime}
+                          </div>
+
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Users className="w-4 h-4 text-gray-400" />
+                            {nextInstance.availableSpots} cupos disponibles de {nextInstance.capacity}
+                          </div>
+
+                          {/* Urgencia */}
+                          {hoursUntil < 48 && nextInstance.status === 'at_risk' && (
+                            <div className="flex items-center gap-2 text-sm text-red-600 font-semibold">
+                              <Zap className="w-4 h-4" />
+                              ¡Sale en {hoursUntil}h! Reserva ahora
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+
+                    {/* Bonus incentives */}
+                    {hasDiscount && nextInstance?.dynamicPricing?.bonusIncentives && nextInstance.dynamicPricing.bonusIncentives.length > 0 && (
+                      <div className="mb-4 p-2 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="flex items-start gap-2">
+                          <Gift className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <div className="text-xs text-blue-700">
+                            <span className="font-semibold">Bonus: </span>
+                            {nextInstance.dynamicPricing.bonusIncentives.join(', ')}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Rating */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < Math.round(tour.rating)
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-sm text-gray-600">
+                        {tour.rating.toFixed(1)} ({tour.reviewCount} reseñas)
+                      </span>
+                    </div>
+
+                    {/* Precio */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        {hasDiscount && nextInstance ? (
+                          <div>
+                            <div className="text-sm text-gray-500 line-through">
+                              ${nextInstance.originalPrice?.toLocaleString('es-CL')}
+                            </div>
+                            <div className="text-2xl font-bold text-red-600">
+                              ${nextInstance.pricePerPerson.toLocaleString('es-CL')}
+                              <span className="text-sm text-gray-600 font-normal"> /persona</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-2xl font-bold text-gray-900">
+                            ${tour.basePrice.toLocaleString('es-CL')}
+                            <span className="text-sm text-gray-600 font-normal"> /persona</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/tours/${tour.id}`);
+                        }}
+                        className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+                          hasDiscount
+                            ? 'bg-red-600 text-white hover:bg-red-700'
+                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
+                      >
+                        {hasDiscount ? '¡Reserva ahora!' : 'Ver detalles'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Información adicional */}
+        <div className="mt-12 text-center text-gray-600">
+          Mostrando {filteredTours.length} de {tours.length} tours
+        </div>
+      </div>
     </div>
   );
 }
