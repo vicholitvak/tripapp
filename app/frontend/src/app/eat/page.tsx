@@ -148,12 +148,12 @@ export default function Eat() {
                 Descubre la gastronomía única del desierto de Atacama. Platos tradicionales preparados por cocineros locales con ingredientes frescos y auténticos.
               </p>
               <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="/dishes" className="inline-block px-8 py-4 text-lg font-semibold rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 bg-gradient-to-r from-orange-600 to-red-600 text-white hover:from-orange-700 hover:to-red-700">
+                <Link href="/eat/delivery" className="inline-block px-8 py-4 text-lg font-semibold rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 bg-gradient-to-r from-orange-600 to-red-600 text-white hover:from-orange-700 hover:to-red-700">
                   🍽️ Explorar Platos
-                </a>
-                <a href="/cooks" className="inline-block px-8 py-4 text-lg font-semibold rounded-full border-2 border-orange-600 text-orange-600 hover:bg-orange-50 transition-all duration-300 ml-4">
+                </Link>
+                <Link href="/eat/delivery" className="inline-block px-8 py-4 text-lg font-semibold rounded-full border-2 border-orange-600 text-orange-600 hover:bg-orange-50 transition-all duration-300 ml-4">
                   👨‍🍳 Ver Cocineros
-                </a>
+                </Link>
               </motion.div>
             </motion.div>
           </div>
@@ -396,12 +396,12 @@ export default function Eat() {
                 variants={itemVariants}
                 className="flex flex-col sm:flex-row items-center justify-center gap-4"
               >
-                <a href="/dishes" className="inline-block px-8 py-4 text-lg font-semibold rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 bg-white text-orange-600 hover:bg-gray-50">
+                <Link href="/eat/delivery" className="inline-block px-8 py-4 text-lg font-semibold rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 bg-white text-orange-600 hover:bg-gray-50">
                   🍽️ Explorar Platos
-                </a>
-                <a href="/cooks" className="inline-block px-8 py-4 text-lg font-semibold rounded-full border-2 border-white/30 text-white hover:bg-white/10 transition-all duration-300 ml-4">
+                </Link>
+                <Link href="/eat/delivery" className="inline-block px-8 py-4 text-lg font-semibold rounded-full border-2 border-white/30 text-white hover:bg-white/10 transition-all duration-300 ml-4">
                   👨‍🍳 Conocer Cocineros
-                </a>
+                </Link>
               </motion.div>
             </motion.div>
           </div>
@@ -432,7 +432,7 @@ export default function Eat() {
               <h4 className="font-semibold mb-4 text-white">Gastronomía</h4>
               <ul className="space-y-2 text-gray-300">
                 <li><a href="/eat/dishes" className="hover:text-orange-400 transition-colors">Explorar Platos</a></li>
-                <li><a href="/eat/cooks" className="hover:text-orange-400 transition-colors">Cocineros Locales</a></li>
+                <li><Link href="/eat/delivery" className="hover:text-orange-400 transition-colors">Cocineros Locales</Link></li>
                 <li><a href="/eat/orders" className="hover:text-orange-400 transition-colors">Mis Pedidos</a></li>
               </ul>
             </div>

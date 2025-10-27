@@ -24,6 +24,7 @@ interface Dish {
   description: string;
   price: number;
   category: string;
+  dishCategory: 'entrada' | 'fondo' | 'bebida' | 'complemento' | 'postre';
   rating: number;
   prepTime: string;
   image: string;
@@ -61,6 +62,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Clásico imprescindible de la cocina chilena. Preparado con porotos frescos, choclo dulce y zapallo otoñal.',
         price: 8500,
         category: 'chilena',
+        dishCategory: 'fondo',
         rating: 4.8,
         prepTime: '25 min',
         image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop',
@@ -72,6 +74,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Humita preparada diariamente con choclo recién cosechado del oasis local.',
         price: 7200,
         category: 'chilena',
+        dishCategory: 'entrada',
         rating: 4.9,
         prepTime: '30 min',
         image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop',
@@ -83,6 +86,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Estofado tradicional atacameño hecho con carne de res tierna y papas andinas.',
         price: 9500,
         category: 'chilena',
+        dishCategory: 'fondo',
         rating: 4.7,
         prepTime: '35 min',
         image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop',
@@ -94,9 +98,46 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Sopa tradicional chilena con carne, zapallo, choclo y papas del valle.',
         price: 8000,
         category: 'chilena',
+        dishCategory: 'entrada',
         rating: 4.6,
         prepTime: '40 min',
         image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop',
+      },
+      {
+        id: 'mote-con-huesillo',
+        restaurantId: 'dona-carmen',
+        name: 'Mote con Huesillo Tradicional',
+        description: 'Refrescante bebida tradicional chilena con mote de trigo y duraznos en almíbar.',
+        price: 3500,
+        category: 'chilena',
+        dishCategory: 'bebida',
+        rating: 4.5,
+        prepTime: '5 min',
+        image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=400&h=300&fit=crop',
+      },
+      {
+        id: 'pebre-casero',
+        restaurantId: 'dona-carmen',
+        name: 'Pebre Casero',
+        description: 'Salsa chilena picante con tomate, cebolla, cilantro y ají verde.',
+        price: 2500,
+        category: 'chilena',
+        dishCategory: 'complemento',
+        rating: 4.7,
+        prepTime: '10 min',
+        image: 'https://images.unsplash.com/photo-1599639957043-f3aa5c986398?w=400&h=300&fit=crop',
+      },
+      {
+        id: 'sopaipillas',
+        restaurantId: 'dona-carmen',
+        name: 'Sopaipillas Pasadas',
+        description: 'Sopaipillas fritas con chancaca caliente, perfectas para el frío del desierto.',
+        price: 4500,
+        category: 'chilena',
+        dishCategory: 'postre',
+        rating: 4.8,
+        prepTime: '15 min',
+        image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop',
       },
     ],
   },
@@ -117,6 +158,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Pastel estratificado con capas de carne, pollo, huevo y aceitunas. Cubierto con pasta de choclo cremosa.',
         price: 12000,
         category: 'premium',
+        dishCategory: 'fondo',
         rating: 4.9,
         prepTime: '45 min',
         image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop',
@@ -128,6 +170,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Lomo de res salteado con vegetales frescos y papas fritas artesanales.',
         price: 13500,
         category: 'premium',
+        dishCategory: 'fondo',
         rating: 4.8,
         prepTime: '35 min',
         image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop',
@@ -139,9 +182,34 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Filete de salmón a la parrilla con quinoa del altiplano y verduras asadas.',
         price: 15000,
         category: 'premium',
+        dishCategory: 'fondo',
         rating: 5.0,
         prepTime: '40 min',
         image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop',
+      },
+      {
+        id: 'pisco-sour-premium',
+        restaurantId: 'familia-silva',
+        name: 'Pisco Sour Premium',
+        description: 'Clásico chileno preparado con pisco artesanal y limones frescos.',
+        price: 5500,
+        category: 'premium',
+        dishCategory: 'bebida',
+        rating: 4.9,
+        prepTime: '10 min',
+        image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=300&fit=crop',
+      },
+      {
+        id: 'ceviche-entrada',
+        restaurantId: 'familia-silva',
+        name: 'Ceviche de Entrada',
+        description: 'Pescado fresco marinado en limón con cebolla morada y cilantro.',
+        price: 8500,
+        category: 'premium',
+        dishCategory: 'entrada',
+        rating: 4.8,
+        prepTime: '15 min',
+        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop',
       },
     ],
   },
@@ -162,6 +230,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Bowl nutritivo con quinoa, vegetales asados, aguacate y aderezo de tahini.',
         price: 7500,
         category: 'vegetariana',
+        dishCategory: 'fondo',
         rating: 4.8,
         prepTime: '20 min',
         image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop',
@@ -173,6 +242,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Quinoa orgánica con vegetales frescos, nueces y vinagreta de limón.',
         price: 6500,
         category: 'vegetariana',
+        dishCategory: 'entrada',
         rating: 4.6,
         prepTime: '15 min',
         image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop',
@@ -184,9 +254,22 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Wrap integral con hummus casero, vegetales frescos y queso de cabra.',
         price: 6000,
         category: 'vegetariana',
+        dishCategory: 'fondo',
         rating: 4.7,
         prepTime: '25 min',
         image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&h=300&fit=crop',
+      },
+      {
+        id: 'smoothie-verde',
+        restaurantId: 'verde-oasis',
+        name: 'Smoothie Verde Energizante',
+        description: 'Batido verde con espinaca, plátano, mango y leche de almendras.',
+        price: 4500,
+        category: 'vegetariana',
+        dishCategory: 'bebida',
+        rating: 4.7,
+        prepTime: '5 min',
+        image: 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=400&h=300&fit=crop',
       },
     ],
   },
@@ -207,6 +290,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Pasta fresca con salsa carbonara cremosa, tocino y parmesano.',
         price: 9000,
         category: 'internacional',
+        dishCategory: 'fondo',
         rating: 4.7,
         prepTime: '30 min',
         image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=300&fit=crop',
@@ -218,6 +302,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Pizza con masa madre, tomate san marzano, mozzarella fresca y albahaca.',
         price: 10500,
         category: 'internacional',
+        dishCategory: 'fondo',
         rating: 4.5,
         prepTime: '35 min',
         image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop',
@@ -229,9 +314,34 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         description: 'Risotto cremoso con hongos silvestres y parmesano reggiano.',
         price: 11000,
         category: 'internacional',
+        dishCategory: 'fondo',
         rating: 4.6,
         prepTime: '40 min',
         image: 'https://images.unsplash.com/photo-1476124369491-b79c9e58c10d?w=400&h=300&fit=crop',
+      },
+      {
+        id: 'bruschetta-italiana',
+        restaurantId: 'chef-roberto',
+        name: 'Bruschetta Italiana',
+        description: 'Pan tostado con tomates frescos, albahaca y aceite de oliva virgen.',
+        price: 5500,
+        category: 'internacional',
+        dishCategory: 'entrada',
+        rating: 4.4,
+        prepTime: '10 min',
+        image: 'https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=400&h=300&fit=crop',
+      },
+      {
+        id: 'vino-tinto',
+        restaurantId: 'chef-roberto',
+        name: 'Copa de Vino Tinto',
+        description: 'Selección de vinos tintos chilenos premium.',
+        price: 4500,
+        category: 'internacional',
+        dishCategory: 'bebida',
+        rating: 4.6,
+        prepTime: '2 min',
+        image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=300&fit=crop',
       },
     ],
   },
@@ -244,6 +354,7 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
 
   useEffect(() => {
     loadRestaurant();
@@ -274,6 +385,8 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
   const handleAddToCart = (dish: Dish) => {
     if (!restaurant) return;
 
+    const quantity = quantities[dish.id] || 1;
+
     addToCart({
       dishId: dish.id,
       name: dish.name,
@@ -282,11 +395,47 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
       cookerName: restaurant.name,
       cookerId: restaurant.id,
       cookerAvatar: restaurant.image,
-      quantity: 1,
+      quantity,
       prepTime: dish.prepTime,
       category: dish.category
     });
+
+    // Reset quantity after adding
+    setQuantities(prev => ({ ...prev, [dish.id]: 1 }));
   };
+
+  const updateQuantity = (dishId: string, delta: number) => {
+    setQuantities(prev => {
+      const current = prev[dishId] || 1;
+      const newValue = Math.max(1, current + delta);
+      return { ...prev, [dishId]: newValue };
+    });
+  };
+
+  // Group dishes by category
+  const groupedDishes = restaurant?.dishes.reduce((acc, dish) => {
+    if (!acc[dish.dishCategory]) {
+      acc[dish.dishCategory] = [];
+    }
+    acc[dish.dishCategory].push(dish);
+    return acc;
+  }, {} as Record<string, Dish[]>) || {};
+
+  const categoryNames: Record<string, string> = {
+    entrada: '🥗 Entradas',
+    fondo: '🍽️ Platos de Fondo',
+    bebida: '🥤 Bebidas',
+    complemento: '🌶️ Complementos',
+    postre: '🍰 Postres',
+  };
+
+  const categoryOrder: ('entrada' | 'fondo' | 'bebida' | 'complemento' | 'postre')[] = [
+    'entrada',
+    'fondo',
+    'bebida',
+    'complemento',
+    'postre',
+  ];
 
   if (loading) {
     return (
@@ -433,68 +582,103 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
         </div>
       </div>
 
-      {/* Restaurant Dishes */}
+      {/* Restaurant Dishes by Category */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-8">
           Menú de {restaurant.name}
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {restaurant.dishes.map(dish => (
-            <div
-              key={dish.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
-            >
-              {/* Dish Image */}
-              <div className="relative h-48 bg-gray-200 overflow-hidden">
-                {dish.image ? (
-                  <img
-                    src={dish.image}
-                    alt={dish.name}
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    Sin imagen
-                  </div>
-                )}
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
-                  <span className="text-yellow-500">★</span>
-                  <span className="text-sm font-medium">{dish.rating}</span>
-                </div>
-              </div>
+        {categoryOrder.map(category => {
+          const dishesInCategory = groupedDishes[category];
+          if (!dishesInCategory || dishesInCategory.length === 0) return null;
 
-              {/* Content */}
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                  {dish.name}
-                </h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                  {dish.description}
-                </p>
+          return (
+            <div key={category} className="mb-12">
+              <h3 className="text-xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-orange-500">
+                {categoryNames[category]}
+              </h3>
 
-                {/* Prep time */}
-                <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
-                  <Clock className="w-4 h-4" />
-                  <span>{dish.prepTime}</span>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {dishesInCategory.map(dish => {
+                  const quantity = quantities[dish.id] || 1;
+                  return (
+                    <div
+                      key={dish.id}
+                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all"
+                    >
+                      {/* Dish Image */}
+                      <div className="relative h-48 bg-gray-200 overflow-hidden">
+                        {dish.image ? (
+                          <img
+                            src={dish.image}
+                            alt={dish.name}
+                            className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                            Sin imagen
+                          </div>
+                        )}
+                        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
+                          <span className="text-yellow-500">★</span>
+                          <span className="text-sm font-medium">{dish.rating}</span>
+                        </div>
+                      </div>
 
-                {/* Price and button */}
-                <div className="flex items-center justify-between">
-                  <div className="text-xl font-bold text-orange-600">
-                    ${dish.price.toLocaleString('es-CL')}
-                  </div>
-                  <button
-                    onClick={() => handleAddToCart(dish)}
-                    className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-2 rounded-lg hover:from-orange-700 hover:to-red-700 transition-all duration-300 font-medium"
-                  >
-                    Agregar
-                  </button>
-                </div>
+                      {/* Content */}
+                      <div className="p-4">
+                        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                          {dish.name}
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                          {dish.description}
+                        </p>
+
+                        {/* Prep time */}
+                        <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
+                          <Clock className="w-4 h-4" />
+                          <span>{dish.prepTime}</span>
+                        </div>
+
+                        {/* Price */}
+                        <div className="text-xl font-bold text-orange-600 mb-3">
+                          ${dish.price.toLocaleString('es-CL')}
+                        </div>
+
+                        {/* Quantity selector and add button */}
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                            <button
+                              onClick={() => updateQuantity(dish.id, -1)}
+                              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 transition-colors text-gray-700 font-bold"
+                            >
+                              -
+                            </button>
+                            <div className="px-4 py-2 min-w-[3rem] text-center font-semibold">
+                              {quantity}
+                            </div>
+                            <button
+                              onClick={() => updateQuantity(dish.id, 1)}
+                              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 transition-colors text-gray-700 font-bold"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <button
+                            onClick={() => handleAddToCart(dish)}
+                            className="flex-1 bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-2 rounded-lg hover:from-orange-700 hover:to-red-700 transition-all duration-300 font-medium"
+                          >
+                            Agregar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );

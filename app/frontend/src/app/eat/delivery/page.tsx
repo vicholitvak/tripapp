@@ -14,6 +14,7 @@ interface Dish {
   description: string;
   price: number;
   category: string;
+  dishCategory?: 'entrada' | 'fondo' | 'bebida' | 'complemento' | 'postre';
   rating: number;
   prepTime: string;
   image: string;
@@ -639,12 +640,16 @@ export default function DeliveryPage() {
             {filteredDishes.map(dish => {
               const restaurant = restaurants.find(r => r.id === dish.restaurantId);
               return (
-                <div key={dish.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                <div
+                  key={dish.id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all cursor-pointer group"
+                  onClick={() => router.push(`/eat/restaurant/${dish.restaurantId}`)}
+                >
                   <div className="relative h-48 overflow-hidden bg-gray-200">
                     <img
                       src={dish.image}
                       alt={dish.name}
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
                       <span className="text-yellow-500">★</span>
@@ -653,7 +658,7 @@ export default function DeliveryPage() {
                   </div>
 
                   <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{dish.name}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">{dish.name}</h3>
                     <p className="text-gray-600 text-sm mb-3 line-clamp-2">{dish.description}</p>
 
                     <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
@@ -672,7 +677,10 @@ export default function DeliveryPage() {
                         ${dish.price.toLocaleString('es-CL')}
                       </span>
                       <button
-                        onClick={() => handleAddToCart(dish)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(dish);
+                        }}
                         className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-2 rounded-lg hover:from-orange-700 hover:to-red-700 transition-all duration-300 font-medium"
                       >
                         Agregar
