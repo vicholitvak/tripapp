@@ -19,6 +19,7 @@ import {
   Service,
   MockConversionLog,
 } from '@/types/provider';
+import { NotificationService } from './notificationService';
 
 export class MockProviderService {
   private static PROVIDERS_COLLECTION = 'providers';
@@ -222,6 +223,29 @@ export class MockProviderService {
     batch.set(doc(logRef), conversionLog);
 
     await batch.commit();
+
+    // 5. Enviar notificación al admin (best-effort)
+    try {
+      // Buscar el admin que creó el mock (si está en metadata)
+      // Por ahora, notificar mediante log en consola
+      console.log('🎉 Mock reclamado:', {
+        mockProviderId,
+        businessName: mockProvider.businessInfo.name,
+        claimedBy: userId,
+      });
+
+      // TODO: Obtener adminUserId del mock o invitación y enviar notificación
+      // await NotificationService.notifyMockClaimed(
+      //   adminUserId,
+      //   mockProviderId,
+      //   mockProvider.businessInfo.name,
+      //   userId,
+      //   mockProviderId
+      // );
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      // No bloquear el flujo si falla la notificación
+    }
 
     return {
       ...mockProvider,
