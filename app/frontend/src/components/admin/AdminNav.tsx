@@ -9,7 +9,8 @@ import {
   Activity,
   ShoppingBag,
   CheckCircle,
-  Home
+  Home,
+  Gem
 } from 'lucide-react';
 
 interface NavItem {
@@ -70,6 +71,12 @@ export default function AdminNav() {
       label: 'Tierra Gres',
       icon: <ShoppingBag className="w-5 h-5" />,
       description: 'Onboarding Tierra Gres (Antonia)',
+    },
+    {
+      href: '/admin/seed-joyas-relmu',
+      label: 'Joyas Relmu',
+      icon: <Gem className="w-5 h-5" />,
+      description: 'Onboarding Joyas Relmu (Javi)',
     },
   ];
 

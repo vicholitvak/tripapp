@@ -29,7 +29,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ProviderLead } from '@/types/provider';
-import { MarketplaceListing } from '@/types/marketplace';
+import { Listing } from '@/types/marketplace';
 
 const ADMIN_ID = 'admin-seed';
 
@@ -227,62 +227,34 @@ export async function seedTierraGres() {
     const listingIds: string[] = [];
 
     for (const producto of productos) {
-      const listingData: Omit<MarketplaceListing, 'id'> = {
+      const listingData: Omit<Listing, 'id'> = {
         providerId: mockProviderId,
-        providerName: 'Tierra Gres',
-        providerType: 'artisan',
+        baseType: 'marketplace',
+        category: 'ceramica',
 
-        // Información del producto
         name: producto.name,
         description: producto.description,
-        category: producto.category,
-
-        // Pricing con margen
-        pricing: {
-          basePrice: producto.basePrice,
-          sellingPrice: producto.sellingPrice,
-          currency: 'CLP',
-          platformCommission: producto.sellingPrice - producto.basePrice,
-        },
-
-        // Stock y disponibilidad
-        stock: producto.stock,
-        unlimitedStock: false,
-        available: true,
-
-        // Imágenes
+        price: producto.sellingPrice,
+        currency: 'CLP',
         images: producto.images,
-
-        // Características
-        tags: producto.tags,
-        features: [
-          'Hecho a mano',
-          'Cerámica gres',
-          'Pieza única',
-          'Inspiración desierto de Atacama',
-          'Diseño original',
-        ],
-
-        // Envío
-        shipping: {
-          available: true,
-          freeShippingMinAmount: 50000,
-          estimatedDays: '3-5 días',
-          shippingCost: 5000,
-          zones: ['San Pedro de Atacama', 'Calama', 'Santiago', 'Nacional'],
-        },
-
-        // Stats
         rating: 0,
         reviewCount: 0,
-        soldCount: 0,
-        viewCount: 0,
-
-        // Status
         status: 'active',
-        featured: producto.basePrice >= 65000, // Featured para productos premium
+        featured: producto.basePrice >= 65000,
 
-        // Metadata
+        // Tags opcionales
+        tags: {
+          custom: producto.tags,
+        },
+
+        // Product info específico de marketplace
+        productInfo: {
+          stock: producto.stock,
+          weight: 0.8,
+          dimensions: 'Según pieza',
+          shippingCost: 5000,
+        },
+
         createdAt: serverTimestamp() as Timestamp,
         updatedAt: serverTimestamp() as Timestamp,
       };
