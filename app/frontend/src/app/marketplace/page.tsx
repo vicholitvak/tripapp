@@ -343,19 +343,11 @@ export default function MarketplacePage() {
       setLoading(true);
       setError(null);
 
-      // En desarrollo: usar mocks directamente para evitar latencia de Firebase
-      // TODO: En producción, descomentar el código de Firebase y crear índices necesarios
-      console.log('Using mock data for fast loading');
-      setProviders(MOCK_PROVIDERS);
-      const allProducts = MOCK_PROVIDERS.flatMap(provider => provider.products);
-      setListings(allProducts);
-      setFilteredListings(allProducts);
-
-      /* Código Firebase (requiere índices compuestos):
+      // Cargar desde Firebase
       try {
         const allListings = await MarketplaceService.getAllActive();
 
-        // Si Firebase devuelve datos vacíos, usar mocks
+        // Si Firebase devuelve datos vacíos, usar mocks como fallback
         if (allListings.length === 0) {
           console.log('No listings in Firebase, using mock data');
           setProviders(MOCK_PROVIDERS);
@@ -363,6 +355,7 @@ export default function MarketplacePage() {
           setListings(allProducts);
           setFilteredListings(allProducts);
         } else {
+          console.log(`Loaded ${allListings.length} listings from Firebase`);
           setListings(allListings);
           setFilteredListings(allListings);
           // TODO: Load providers from Firebase
@@ -375,7 +368,6 @@ export default function MarketplacePage() {
         setListings(allProducts);
         setFilteredListings(allProducts);
       }
-      */
     } catch (err) {
       console.error('Error loading listings:', err);
       setError('Error loading marketplace');

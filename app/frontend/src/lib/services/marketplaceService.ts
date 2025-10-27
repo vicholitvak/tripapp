@@ -25,7 +25,7 @@ import {
 } from '@/types/marketplace';
 
 export class MarketplaceService {
-  private static COLLECTION = 'listings';
+  private static COLLECTION = 'marketplaceListings';
 
   /**
    * Crea un nuevo listing (producto o servicio)
