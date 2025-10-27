@@ -343,8 +343,8 @@ export const MOCK_TOURS: (Tour & { instances: TourInstance[] })[] = [
       'Experiencia única volando sobre el desierto de Atacama al amanecer. Vista panorámica de volcanes, salares y la Cordillera de los Andes. Incluye desayuno campestre y brindis con champagne.',
     category: 'trekking_aventura',
     images: [
-      'https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=600',
-      'https://images.unsplash.com/photo-1527004013197-933c4bb611b3?w=600',
+      'https://images.unsplash.com/photo-1648737965834-3viduukRYaw?w=600',
+      'https://images.unsplash.com/photo-1648737967311-Dh8yOZnctpU?w=600',
     ],
     difficulty: 'facil',
     duration: 'medio_dia',
@@ -430,8 +430,8 @@ export const MOCK_TOURS: (Tour & { instances: TourInstance[] })[] = [
       'Aventura extrema en buggies 4x4 por el desierto con paradas para avistamiento de aves. Recorre dunas, valles y lagunas mientras observas flamencos, taguas y otras especies locales. Para amantes de la adrenalina y la naturaleza.',
     category: 'trekking_aventura',
     images: [
-      'https://images.unsplash.com/photo-1626668893632-6f3a4466d22f?w=600',
-      'https://images.unsplash.com/photo-1564514382983-b5187fd47b73?w=600',
+      'https://images.unsplash.com/photo-1591124600779-6xZTebWyl7s?w=600',
+      'https://images.unsplash.com/photo-1603123022713-ea61c7caec1b?w=600',
     ],
     difficulty: 'moderado',
     duration: 'medio_dia',
