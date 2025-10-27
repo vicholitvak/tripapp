@@ -11,27 +11,38 @@ export type ProviderType =
   | 'other';         // Otros
 
 export type ProviderStatus =
+  | 'mock'           // Mock provider (no real, para demos)
+  | 'draft'          // Borrador (proveedor creando perfil)
   | 'pending'        // Enviado, esperando aprobación
   | 'approved'       // Aprobado por admin
   | 'active'         // Activo en la plataforma
   | 'suspended'      // Suspendido
   | 'rejected';      // Rechazado
 
+export type ProviderAccountType =
+  | 'mock'           // Mock provider (pre-configurado para invitación)
+  | 'real';          // Proveedor real registrado
+
 export type InvitationStatus =
   | 'pending'        // Creada, no enviada
   | 'sent'           // Enviada/entregada
-  | 'used'           // Usada por el proveedor
-  | 'expired';       // Expirada
+  | 'claimed'        // Reclamada por el proveedor (reemplaza 'used')
+  | 'expired'        // Expirada
+  | 'cancelled';     // Cancelada por admin
 
 // Invitation Interface
 export interface Invitation {
   id?: string;
   code: string;                    // ATK-2024-CARMEN-001
 
+  // Link to mock provider
+  mockProviderId?: string;         // ID del mock provider a reclamar
+
   // Personalización
   recipientName: string;           // "Carmen"
   businessName: string;            // "Cocina de Doña Carmen"
   category: string;                // "cocinera tradicional"
+  email: string;                   // Email del proveedor que debe reclamar
   customMessage?: string;          // Mensaje adicional opcional
 
   type: ProviderType;
@@ -40,8 +51,11 @@ export interface Invitation {
   createdBy: string;               // admin uid
   createdAt: Timestamp | Date;
   sentAt?: Timestamp | Date;
-  usedBy?: string;                 // user uid que usó la invitación
-  usedAt?: Timestamp | Date;
+
+  // Cuando se reclama
+  claimedBy?: string;              // user uid que reclamó la invitación
+  claimedAt?: Timestamp | Date;
+
   expiresAt?: Timestamp | Date;
 
   metadata?: {
@@ -75,10 +89,12 @@ export interface Service {
 // Provider Profile
 export interface Provider {
   id?: string;
-  userId: string;                  // Firebase Auth uid
+  userId?: string;                 // Firebase Auth uid (opcional para mocks)
+  accountType: ProviderAccountType; // 'mock' o 'real'
   type: ProviderType;
   status: ProviderStatus;
   invitationCode?: string;         // Código de invitación usado
+  linkedInvitationId?: string;     // ID de la invitación (si es mock)
 
   // Personal Info
   personalInfo: {
@@ -125,10 +141,31 @@ export interface Provider {
   approvedBy?: string;             // admin uid
   rejectedAt?: Timestamp | Date;
   rejectedReason?: string;
+  claimedAt?: Timestamp | Date;    // Cuando un mock se convirtió en real
 
   // Flags
   featured?: boolean;
   verified?: boolean;
+}
+
+// Mock to Real Conversion Log
+export interface MockConversionLog {
+  id?: string;
+  mockProviderId: string;
+  realProviderId: string;
+  invitationId: string;
+  convertedBy: string;             // user uid que reclamó
+  convertedAt: Timestamp | Date;
+
+  // Snapshot del mock antes de convertir
+  mockSnapshot: Provider;
+
+  // Cambios aplicados
+  changes?: {
+    field: string;
+    oldValue: unknown;
+    newValue: unknown;
+  }[];
 }
 
 // Onboarding Progress (temporal durante el proceso)

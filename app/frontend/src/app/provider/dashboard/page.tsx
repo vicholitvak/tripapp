@@ -45,6 +45,7 @@ export default function ProviderDashboard() {
           // Use mock data for demo purposes
           providerData = {
             userId: user.uid,
+            accountType: 'real',
             type: 'cook',
             status: 'active',
             personalInfo: {

@@ -35,14 +35,16 @@ export class InvitationService {
   }
 
   /**
-   * Crea una nueva invitación
+   * Crea una nueva invitación (puede estar vinculada a un mock provider)
    */
   static async createInvitation(
     recipientName: string,
     businessName: string,
     category: string,
+    email: string,
     type: ProviderType,
     createdBy: string,
+    mockProviderId?: string,
     customMessage?: string
   ): Promise<Invitation> {
     const code = this.generateCode(recipientName);
@@ -51,9 +53,11 @@ export class InvitationService {
 
     const invitation: Invitation = {
       code,
+      mockProviderId,
       recipientName,
       businessName,
       category,
+      email,
       type,
       status: 'pending',
       createdBy,
@@ -64,6 +68,15 @@ export class InvitationService {
 
     const docRef = await addDoc(collection(db, this.COLLECTION), invitation);
 
+    // Si está vinculada a un mock, actualizar el mock
+    if (mockProviderId) {
+      const mockRef = doc(db, 'providers', mockProviderId);
+      await updateDoc(mockRef, {
+        linkedInvitationId: docRef.id,
+        updatedAt: serverTimestamp(),
+      });
+    }
+
     return {
       ...invitation,
       id: docRef.id,
@@ -72,11 +85,12 @@ export class InvitationService {
   }
 
   /**
-   * Valida un código de invitación
+   * Valida un código de invitación y obtiene el mock provider si existe
    */
   static async validateCode(code: string): Promise<{
     valid: boolean;
     invitation?: Invitation;
+    mockProvider?: unknown;
     error?: string;
   }> {
     try {
@@ -91,12 +105,17 @@ export class InvitationService {
         return { valid: false, error: 'Código de invitación no encontrado' };
       }
 
-      const doc = snapshot.docs[0];
-      const invitation = { id: doc.id, ...doc.data() } as Invitation;
+      const docData = snapshot.docs[0];
+      const invitation = { id: docData.id, ...docData.data() } as Invitation;
 
-      // Verificar si ya fue usada
-      if (invitation.status === 'used') {
+      // Verificar si ya fue reclamada
+      if (invitation.status === 'claimed') {
         return { valid: false, error: 'Esta invitación ya fue utilizada' };
+      }
+
+      // Verificar si está cancelada
+      if (invitation.status === 'cancelled') {
+        return { valid: false, error: 'Esta invitación ha sido cancelada' };
       }
 
       // Verificar expiración
@@ -112,7 +131,18 @@ export class InvitationService {
         }
       }
 
-      return { valid: true, invitation };
+      // Si tiene mockProviderId, obtener el mock provider
+      let mockProvider;
+      if (invitation.mockProviderId) {
+        const mockRef = doc(db, 'providers', invitation.mockProviderId);
+        const mockSnap = await getDoc(mockRef);
+
+        if (mockSnap.exists()) {
+          mockProvider = { id: mockSnap.id, ...mockSnap.data() };
+        }
+      }
+
+      return { valid: true, invitation, mockProvider };
     } catch (error) {
       console.error('Error validating invitation code:', error);
       return { valid: false, error: 'Error al validar el código' };
@@ -120,14 +150,41 @@ export class InvitationService {
   }
 
   /**
-   * Marca una invitación como usada
+   * Reclama una invitación (cuando el proveedor se registra)
    */
-  static async markAsUsed(invitationId: string, userId: string): Promise<void> {
+  static async claimInvitation(invitationId: string, userId: string): Promise<void> {
     const docRef = doc(db, this.COLLECTION, invitationId);
     await updateDoc(docRef, {
-      status: 'used',
-      usedBy: userId,
-      usedAt: serverTimestamp(),
+      status: 'claimed',
+      claimedBy: userId,
+      claimedAt: serverTimestamp(),
+    });
+  }
+
+  /**
+   * Cancela una invitación (admin)
+   */
+  static async cancelInvitation(invitationId: string): Promise<void> {
+    const docRef = doc(db, this.COLLECTION, invitationId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      throw new Error('Invitation not found');
+    }
+
+    const invitation = docSnap.data() as Invitation;
+
+    // Si tenía mockProviderId, quitar la vinculación
+    if (invitation.mockProviderId) {
+      const mockRef = doc(db, 'providers', invitation.mockProviderId);
+      await updateDoc(mockRef, {
+        linkedInvitationId: null,
+        updatedAt: serverTimestamp(),
+      });
+    }
+
+    await updateDoc(docRef, {
+      status: 'cancelled',
     });
   }
 
@@ -208,7 +265,8 @@ export class InvitationService {
     total: number;
     pending: number;
     sent: number;
-    used: number;
+    claimed: number;
+    cancelled: number;
     expired: number;
     conversionRate: number;
   }> {
@@ -218,16 +276,35 @@ export class InvitationService {
       total: invitations.length,
       pending: invitations.filter(i => i.status === 'pending').length,
       sent: invitations.filter(i => i.status === 'sent').length,
-      used: invitations.filter(i => i.status === 'used').length,
+      claimed: invitations.filter(i => i.status === 'claimed').length,
+      cancelled: invitations.filter(i => i.status === 'cancelled').length,
       expired: invitations.filter(i => i.status === 'expired').length,
       conversionRate: 0,
     };
 
-    const sentOrUsed = stats.sent + stats.used;
-    if (sentOrUsed > 0) {
-      stats.conversionRate = (stats.used / sentOrUsed) * 100;
+    const sentOrClaimed = stats.sent + stats.claimed;
+    if (sentOrClaimed > 0) {
+      stats.conversionRate = (stats.claimed / sentOrClaimed) * 100;
     }
 
     return stats;
+  }
+
+  /**
+   * Obtiene invitaciones vinculadas a un mock provider
+   */
+  static async getByMockProviderId(mockProviderId: string): Promise<Invitation | null> {
+    const q = query(
+      collection(db, this.COLLECTION),
+      where('mockProviderId', '==', mockProviderId)
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      return null;
+    }
+
+    return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as Invitation;
   }
 }

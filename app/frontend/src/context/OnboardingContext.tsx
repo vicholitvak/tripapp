@@ -141,9 +141,9 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
       setDraftData({ type });
       setCurrentStep(1);
 
-      // Marcar invitación como usada
+      // Reclamar invitación
       if (invitation.id) {
-        await InvitationService.markAsUsed(invitation.id, user.uid);
+        await InvitationService.claimInvitation(invitation.id, user.uid);
       }
 
       setLoading(false);

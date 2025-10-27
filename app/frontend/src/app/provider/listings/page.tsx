@@ -60,6 +60,7 @@ export default function ProviderListings() {
           providerData = {
             id: 'demo-provider',
             userId: user.uid,
+            accountType: 'real',
             type: 'cook',
             status: 'active',
             personalInfo: {

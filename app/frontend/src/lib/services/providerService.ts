@@ -40,6 +40,7 @@ export class ProviderService {
   ): Promise<Provider> {
     const provider: Provider = {
       userId,
+      accountType: 'real',
       type,
       status: 'pending',
       invitationCode,
@@ -253,6 +254,7 @@ export class ProviderService {
     // Crear provider con los datos del draft
     const provider: Provider = {
       userId,
+      accountType: 'real',
       type: progress.draftData.type!,
       status: 'pending',
       invitationCode: progress.invitationCode,

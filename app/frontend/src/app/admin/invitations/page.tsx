@@ -22,6 +22,7 @@ export default function AdminInvitationsPage() {
     recipientName: '',
     businessName: '',
     category: '',
+    email: '',
     type: 'cook' as ProviderType,
     customMessage: '',
   });
@@ -53,8 +54,10 @@ export default function AdminInvitationsPage() {
         formData.recipientName,
         formData.businessName,
         formData.category,
+        formData.email,
         formData.type,
         user.uid,
+        undefined, // mockProviderId
         formData.customMessage || undefined
       );
 
@@ -69,6 +72,7 @@ export default function AdminInvitationsPage() {
         recipientName: '',
         businessName: '',
         category: '',
+        email: '',
         type: 'cook',
         customMessage: '',
       });
@@ -214,6 +218,23 @@ export default function AdminInvitationsPage() {
                     setFormData({ ...formData, category: e.target.value })
                   }
                   placeholder="ej: cocinera tradicional, guía astronómico, artesana en cerámica"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Email del Proveedor *
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  placeholder="ej: carmen@ejemplo.com"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>
