@@ -1,18 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { useOnboarding } from '@/context/OnboardingContext';
 import { ProviderService } from '@/lib/services/providerService';
 import { Provider } from '@/types/provider';
-import { CheckCircle, Edit, AlertCircle, MapPin, Mail, Phone, Globe, Instagram } from 'lucide-react';
+import { CheckCircle, Edit, AlertCircle, Mail, Phone, Globe, Instagram } from 'lucide-react';
 
 export default function MockReviewPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { provider } = useOnboarding();
-  const searchParams = useSearchParams();
   const [mockProvider, setMockProvider] = useState<Provider | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
