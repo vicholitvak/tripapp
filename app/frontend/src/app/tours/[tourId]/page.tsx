@@ -499,8 +499,7 @@ export default function TourDetailPage() {
               {selectedInstance && (
                 <button
                   onClick={() => {
-                    // TODO: Navigate to booking page
-                    alert('Próximamente: Sistema de reserva');
+                    router.push(`/tours/${tourId}/book?instance=${selectedInstance.id}`);
                   }}
                   disabled={selectedInstance.status === 'full'}
                   className={`w-full py-4 rounded-lg font-bold text-lg transition-all ${
