@@ -1,14 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Header } from '../../components/header';
 import {
   Star,
   Clock,
   Calendar,
-  MapPin,
   Users,
   TrendingDown,
   AlertCircle,
@@ -19,8 +17,7 @@ import {
   Search,
 } from 'lucide-react';
 import { MOCK_TOURS } from '@/lib/seeds/toursSeed';
-import { Tour, TourInstance } from '@/types/tours';
-import { TourCategory } from '@/types/marketplace';
+import { TourInstance } from '@/types/tours';
 
 // Categorías de tours
 const TOUR_CATEGORIES = [
@@ -43,7 +40,6 @@ const DIFFICULTY_FILTERS = [
 
 export default function ToursPage() {
   const router = useRouter();
-  const [tours, setTours] = useState(MOCK_TOURS);
   const [filteredTours, setFilteredTours] = useState(MOCK_TOURS);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
@@ -55,7 +51,7 @@ export default function ToursPage() {
   }, [selectedCategory, selectedDifficulty, searchQuery]);
 
   const applyFilters = () => {
-    let filtered = tours;
+    let filtered = MOCK_TOURS;
 
     // Filtro por categoría
     if (selectedCategory !== 'all') {
@@ -441,7 +437,7 @@ export default function ToursPage() {
 
         {/* Información adicional */}
         <div className="mt-12 text-center text-gray-600">
-          Mostrando {filteredTours.length} de {tours.length} tours
+          Mostrando {filteredTours.length} de {MOCK_TOURS.length} tours
         </div>
       </div>
     </div>
