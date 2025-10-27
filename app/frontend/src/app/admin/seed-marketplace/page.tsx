@@ -11,7 +11,7 @@ export default function SeedMarketplacePage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
   const [stats, setStats] = useState(getSeedStats());
 
-  if (!user || role !== 'admin') {
+  if (!user || role !== 'Admin') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

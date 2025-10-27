@@ -25,7 +25,7 @@ export default function SeedJoyasRelmuPage() {
     };
   } | null>(null);
 
-  if (!user || role !== 'admin') {
+  if (!user || role !== 'Admin') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

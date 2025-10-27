@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
-import { ShoppingCart, Search, Filter, LogOut, Star } from 'lucide-react';
+import { Header } from '@/components/header';
+import { ShoppingCart, Search, Filter, Star } from 'lucide-react';
 
 // Dish type
 interface Dish {
@@ -242,7 +242,6 @@ const CATEGORIES = [
 
 export default function DeliveryPage() {
   const router = useRouter();
-  const { user, logout } = useAuth();
   const { addToCart, itemCount } = useCart();
   const [restaurants, setRestaurants] = useState<Restaurant[]>(MOCK_RESTAURANTS);
   const [allDishes, setAllDishes] = useState<Dish[]>([]);
@@ -303,18 +302,16 @@ export default function DeliveryPage() {
     });
   };
 
-  const handleLogout = async () => {
-    await logout();
-    router.push('/');
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+      {/* Main Navigation Header */}
+      <Header />
+
+      {/* Delivery Sub-Header */}
+      <div className="fixed top-[73px] left-0 right-0 z-30 border-b border-gray-200 bg-white/95 backdrop-blur">
+        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
               🍽️ Delivery
             </h1>
           </div>
@@ -330,23 +327,12 @@ export default function DeliveryPage() {
                 </span>
               )}
             </button>
-            {user && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 hidden md:block">{user.email}</span>
-                <button
-                  onClick={handleLogout}
-                  className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                >
-                  <LogOut className="w-5 h-5 text-gray-700" />
-                </button>
-              </div>
-            )}
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Navigation Tabs: All / Category / Restaurant */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="fixed top-[129px] left-0 right-0 z-30 bg-white border-b border-gray-200">
         <div className="container mx-auto px-4">
           <div className="flex gap-1">
             <button
@@ -383,7 +369,7 @@ export default function DeliveryPage() {
         </div>
       </div>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 mt-[185px]">
         {/* Search and Filter */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row gap-4 mb-6">

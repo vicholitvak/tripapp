@@ -1,14 +1,68 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useOnboarding } from '@/context/OnboardingContext';
 import { useAuth } from '@/context/AuthContext';
 import { AlertCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function OnboardingWelcomePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
   const { provider, invitation } = useOnboarding();
+  const fromMock = searchParams.get('from') === 'mock';
+  const [checkingProvider, setCheckingProvider] = useState(true);
+
+  // Check if user has a claimed mock provider
+  useEffect(() => {
+    const checkForClaimedMock = async () => {
+      if (!user) {
+        setCheckingProvider(false);
+        return;
+      }
+
+      try {
+        // Check if there's a provider that was just claimed from a mock
+        const { ProviderService } = await import('@/lib/services/providerService');
+        const userProvider = await ProviderService.getByUserId(user.uid);
+
+        if (userProvider &&
+            userProvider.accountType === 'real' &&
+            userProvider.status === 'draft' &&
+            userProvider.claimedAt) {
+          // This is a claimed mock, redirect to simplified review
+          router.push('/onboarding/mock-review');
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking for claimed mock:', error);
+      } finally {
+        setCheckingProvider(false);
+      }
+    };
+
+    // If explicitly from mock, redirect immediately
+    if (fromMock && user) {
+      router.push('/onboarding/mock-review');
+      return;
+    }
+
+    // Otherwise check if there's a claimed mock
+    checkForClaimedMock();
+  }, [fromMock, user, router]);
+
+  // Show loading while checking provider
+  if (checkingProvider && user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-orange-50 to-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Verificando información...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Si ya completó onboarding
   if (provider) {

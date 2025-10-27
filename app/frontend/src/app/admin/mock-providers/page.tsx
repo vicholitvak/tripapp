@@ -23,6 +23,7 @@ const PROVIDER_TYPES: { value: ProviderType; label: string }[] = [
   { value: 'tour_guide', label: 'Guía Turístico' },
   { value: 'artisan', label: 'Artesano' },
   { value: 'transport', label: 'Taxi/Transfer' },
+  { value: 'lodging', label: 'Alojamiento' },
   { value: 'service', label: 'Servicio' },
   { value: 'other', label: 'Otro' },
 ];
@@ -49,7 +50,7 @@ export default function AdminMockProvidersPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
-    if (user && role === 'admin') {
+    if (user && role === 'Admin') {
       loadMocks();
     }
   }, [user, role]);

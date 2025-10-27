@@ -13,6 +13,7 @@ const PROVIDER_TYPES: { value: ProviderType; label: string }[] = [
   { value: 'tour_guide', label: 'Guía Turístico' },
   { value: 'artisan', label: 'Artesano' },
   { value: 'transport', label: 'Taxi/Transfer' },
+  { value: 'lodging', label: 'Alojamiento' },
   { value: 'service', label: 'Servicio' },
   { value: 'other', label: 'Otro' },
 ];
@@ -38,7 +39,7 @@ export default function AdminInvitationsPage() {
 
   // Load mocks and invitations
   useEffect(() => {
-    if (user && role === 'admin') {
+    if (user && role === 'Admin') {
       loadData();
     }
   }, [user, role]);
@@ -90,7 +91,7 @@ export default function AdminInvitationsPage() {
   };
 
   // Verificar si es admin
-  if (!user || role !== 'admin') {
+  if (!user || role !== 'Admin') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

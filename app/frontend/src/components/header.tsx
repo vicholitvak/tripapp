@@ -27,6 +27,7 @@ export function Header() {
               <Link href="/" className="text-orange-600 font-bold transition-colors">Inicio</Link>
               <Link href="/tours" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">¿Qué Hacer?</Link>
               <Link href="/eat" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">¿Qué Comer?</Link>
+              <Link href="/stay" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">¿Dónde Quedarse?</Link>
               <Link href="/services" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">Servicios</Link>
               <Link href="/marketplace" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">Tienda</Link>
             </nav>
@@ -104,6 +105,9 @@ export function Header() {
               </Link>
               <Link href="/eat" className="block px-4 py-2 text-gray-700 hover:text-orange-600">
                 ¿Qué Comer?
+              </Link>
+              <Link href="/stay" className="block px-4 py-2 text-gray-700 hover:text-orange-600">
+                ¿Dónde Quedarse?
               </Link>
               <Link href="/services" className="block px-4 py-2 text-gray-700 hover:text-orange-600">
                 Servicios

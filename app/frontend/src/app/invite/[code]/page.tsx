@@ -14,6 +14,7 @@ const PROVIDER_TYPES: { value: ProviderType; label: string; description: string 
   { value: 'tour_guide', label: 'Guía Turístico', description: 'Ofrece tours y experiencias' },
   { value: 'artisan', label: 'Artesano', description: 'Vende artesanías y obras de arte' },
   { value: 'transport', label: 'Transporte', description: 'Taxi, transfer, transporte turístico' },
+  { value: 'lodging', label: 'Alojamiento', description: 'Hostel, camping, glamping, hotel' },
   { value: 'service', label: 'Servicio', description: 'Taller, reparación, mantenimiento' },
   { value: 'other', label: 'Otro', description: 'Otro tipo de servicio' },
 ];
