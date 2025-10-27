@@ -23,6 +23,12 @@ export default function AdminNav() {
 
   const navItems: NavItem[] = [
     {
+      href: '/admin/provider-leads',
+      label: 'Leads',
+      icon: <Users className="w-5 h-5" />,
+      description: 'Base de datos de proveedores potenciales',
+    },
+    {
       href: '/admin/mock-providers',
       label: 'Mock Providers',
       icon: <Users className="w-5 h-5" />,

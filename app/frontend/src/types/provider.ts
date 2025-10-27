@@ -205,3 +205,72 @@ export interface ApprovalRequest {
   // Snapshot del provider al momento de solicitar
   providerSnapshot: Provider;
 }
+
+// Lead Status (estado del contacto con proveedor potencial)
+export type LeadStatus =
+  | 'new'              // Nuevo lead, no contactado
+  | 'contacted'        // Contactado, esperando respuesta
+  | 'interested'       // Interesado, pendiente de enviar invitación
+  | 'invited'          // Invitación enviada
+  | 'claimed'          // Invitación reclamada
+  | 'rejected'         // Rechazó la oferta
+  | 'inactive';        // Inactivo/no respondió
+
+// Source (de dónde viene el lead)
+export type LeadSource =
+  | 'referral'         // Referido
+  | 'direct_contact'   // Contacto directo
+  | 'social_media'     // Redes sociales
+  | 'marketplace'      // Marketplace local
+  | 'event'            // Evento/feria
+  | 'other';           // Otro
+
+// Provider Lead (base de datos de proveedores potenciales)
+export interface ProviderLead {
+  id?: string;
+
+  // Información de contacto
+  contactInfo: {
+    name: string;                    // Nombre del contacto
+    businessName: string;            // Nombre del negocio
+    email: string;
+    phone?: string;
+    whatsapp?: string;
+    address?: string;
+  };
+
+  // Tipo y servicios
+  type: ProviderType;                // Tipo de proveedor
+  category: string;                  // Categoría específica
+  servicesOffered: string[];         // Lista de servicios que ofrece
+
+  // Estado del lead
+  status: LeadStatus;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  source: LeadSource;
+
+  // Notas y seguimiento
+  notes?: string;
+  contactHistory?: {
+    date: Timestamp | Date;
+    contactedBy: string;             // admin uid
+    method: 'phone' | 'email' | 'whatsapp' | 'in_person' | 'other';
+    notes: string;
+    nextFollowUp?: Timestamp | Date;
+  }[];
+
+  // Relaciones
+  invitationId?: string;             // Si se creó invitación
+  mockProviderId?: string;           // Si se creó mock
+  realProviderId?: string;           // Si ya es proveedor real
+
+  // Metadata
+  createdBy: string;                 // admin uid que agregó el lead
+  createdAt: Timestamp | Date;
+  updatedAt: Timestamp | Date;
+  lastContactedAt?: Timestamp | Date;
+
+  // Flags
+  isActive: boolean;
+  tags?: string[];                   // Etiquetas personalizadas
+}
