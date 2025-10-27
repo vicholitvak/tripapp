@@ -1,0 +1,87 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidImageUpload() {
+      return request.resource.size < 5 * 1024 * 1024 && // 5MB max
+             request.resource.contentType.matches('image/.*');
+    }
+
+    function isValidDocumentUpload() {
+      return request.resource.size < 10 * 1024 * 1024 && // 10MB max
+             request.resource.contentType.matches('(image/.*|application/pdf)');
+    }
+
+    // ========================================
+    // IMÁGENES DE PERFIL
+    // ========================================
+    match /profiles/{userId}/{allPaths=**} {
+      // Leer: todos pueden ver imágenes de perfil
+      allow read: if true;
+
+      // Escribir: solo el dueño del perfil
+      allow write: if isOwner(userId) && isValidImageUpload();
+    }
+
+    // ========================================
+    // IMÁGENES DE PROVIDERS
+    // ========================================
+    match /providers/{providerId}/{allPaths=**} {
+      // Leer: todos
+      allow read: if true;
+
+      // Escribir: solo usuarios autenticados (se valida ownership en Firestore)
+      allow write: if isAuthenticated() && isValidImageUpload();
+    }
+
+    // ========================================
+    // IMÁGENES DE LISTINGS (productos/servicios)
+    // ========================================
+    match /listings/{listingId}/{allPaths=**} {
+      // Leer: todos
+      allow read: if true;
+
+      // Escribir: solo usuarios autenticados
+      allow write: if isAuthenticated() && isValidImageUpload();
+    }
+
+    // ========================================
+    // IMÁGENES DE TOURS
+    // ========================================
+    match /tours/{tourId}/{allPaths=**} {
+      // Leer: todos
+      allow read: if true;
+
+      // Escribir: solo usuarios autenticados
+      allow write: if isAuthenticated() && isValidImageUpload();
+    }
+
+    // ========================================
+    // DOCUMENTOS DE VERIFICACIÓN
+    // ========================================
+    match /verification/{userId}/{document} {
+      // Leer: solo el dueño y admins (no se puede verificar admin aquí, solo ownership)
+      allow read: if isOwner(userId);
+
+      // Escribir: solo el dueño
+      allow write: if isOwner(userId) && isValidDocumentUpload();
+    }
+
+    // ========================================
+    // DENEGAR TODO LO DEMÁS
+    // ========================================
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,209 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Función helper: verificar autenticación
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Función helper: verificar si es el dueño del recurso
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Función helper: verificar si es admin
+    function isAdmin() {
+      return isAuthenticated() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Función helper: verificar si es provider
+    function isProvider() {
+      return isAuthenticated() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'provider';
+    }
+
+    // ========================================
+    // USUARIOS
+    // ========================================
+    match /users/{userId} {
+      // Leer: solo el propio usuario o admins
+      allow read: if isOwner(userId) || isAdmin();
+
+      // Crear: solo durante registro (auth recién creado)
+      allow create: if isOwner(userId);
+
+      // Actualizar: solo el propio usuario o admin
+      allow update: if isOwner(userId) || isAdmin();
+
+      // Eliminar: solo admins
+      allow delete: if isAdmin();
+    }
+
+    // ========================================
+    // PROVIDERS (Proveedores de servicios)
+    // ========================================
+    match /providers/{providerId} {
+      // Leer: todos pueden ver proveedores activos
+      allow read: if resource.data.status == 'active' || isAdmin() || isOwner(resource.data.userId);
+
+      // Crear: solo usuarios autenticados
+      allow create: if isAuthenticated();
+
+      // Actualizar: solo el dueño o admins
+      allow update: if isOwner(resource.data.userId) || isAdmin();
+
+      // Eliminar: solo admins
+      allow delete: if isAdmin();
+    }
+
+    // ========================================
+    // LISTINGS (Productos/Servicios del marketplace)
+    // ========================================
+    match /listings/{listingId} {
+      // Leer: todos pueden ver listings activos
+      allow read: if resource.data.status == 'active' ||
+                     isOwner(resource.data.providerId) ||
+                     isAdmin();
+
+      // Crear: solo providers autenticados
+      allow create: if isProvider() || isAdmin();
+
+      // Actualizar: solo el proveedor dueño o admins
+      allow update: if isOwner(resource.data.providerId) || isAdmin();
+
+      // Eliminar: solo admins
+      allow delete: if isAdmin();
+    }
+
+    // ========================================
+    // TOURS
+    // ========================================
+    match /tours/{tourId} {
+      // Leer: todos pueden ver tours activos
+      allow read: if resource.data.status == 'active' ||
+                     isOwner(resource.data.providerId) ||
+                     isAdmin();
+
+      // Crear: solo providers
+      allow create: if isProvider() || isAdmin();
+
+      // Actualizar: solo el proveedor dueño o admins
+      allow update: if isOwner(resource.data.providerId) || isAdmin();
+
+      // Eliminar: solo admins
+      allow delete: if isAdmin();
+
+      // Sub-colección de instancias
+      match /instances/{instanceId} {
+        allow read: if true; // Todos pueden ver instancias
+        allow write: if isOwner(get(/databases/$(database)/documents/tours/$(tourId)).data.providerId) || isAdmin();
+      }
+    }
+
+    // ========================================
+    // BOOKINGS (Reservas)
+    // ========================================
+    match /bookings/{bookingId} {
+      // Leer: solo el cliente que hizo la reserva, el proveedor, o admins
+      allow read: if isOwner(resource.data.customerId) ||
+                     isOwner(resource.data.providerId) ||
+                     isAdmin();
+
+      // Crear: solo usuarios autenticados
+      allow create: if isAuthenticated() && isOwner(request.resource.data.customerId);
+
+      // Actualizar: el proveedor puede actualizar estado, el cliente solo sus datos
+      allow update: if isOwner(resource.data.providerId) ||
+                       (isOwner(resource.data.customerId) &&
+                        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status', 'providerId'])) ||
+                       isAdmin();
+
+      // Eliminar: solo admins
+      allow delete: if isAdmin();
+    }
+
+    // ========================================
+    // ORDERS (Pedidos del marketplace)
+    // ========================================
+    match /orders/{orderId} {
+      // Leer: cliente, proveedor(es) involucrados, o admin
+      allow read: if isOwner(resource.data.customerId) ||
+                     isAdmin() ||
+                     // TODO: verificar si el usuario es provider de algún item en la orden
+                     isProvider();
+
+      // Crear: solo usuarios autenticados
+      allow create: if isAuthenticated() && isOwner(request.resource.data.customerId);
+
+      // Actualizar: proveedores pueden actualizar estado de sus items
+      allow update: if isOwner(resource.data.customerId) ||
+                       isProvider() ||
+                       isAdmin();
+
+      // Eliminar: solo admins
+      allow delete: if isAdmin();
+    }
+
+    // ========================================
+    // REVIEWS (Reseñas)
+    // ========================================
+    match /reviews/{reviewId} {
+      // Leer: todos pueden ver reviews
+      allow read: if true;
+
+      // Crear: solo el cliente que compró puede crear review
+      // TODO: verificar que el usuario tenga una reserva/orden completada con este provider
+      allow create: if isAuthenticated() && isOwner(request.resource.data.userId);
+
+      // Actualizar: solo el autor de la review
+      allow update: if isOwner(resource.data.userId);
+
+      // Eliminar: el autor o admins
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+
+    // ========================================
+    // INVITATIONS (Invitaciones de proveedores)
+    // ========================================
+    match /invitations/{invitationId} {
+      // Leer: todos (para validar códigos)
+      allow read: if true;
+
+      // Crear: solo admins
+      allow create: if isAdmin();
+
+      // Actualizar: solo admins (para marcar como usadas)
+      allow update: if isAdmin();
+
+      // Eliminar: solo admins
+      allow delete: if isAdmin();
+    }
+
+    // ========================================
+    // NOTIFICATIONS
+    // ========================================
+    match /notifications/{notificationId} {
+      // Leer: solo el destinatario
+      allow read: if isOwner(resource.data.userId);
+
+      // Crear: el sistema (admins) o el propio usuario
+      allow create: if isAuthenticated();
+
+      // Actualizar: solo el destinatario (para marcar como leída)
+      allow update: if isOwner(resource.data.userId);
+
+      // Eliminar: el destinatario o admins
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+
+    // ========================================
+    // DENEGAR TODO LO DEMÁS
+    // ========================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
