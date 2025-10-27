@@ -8,16 +8,45 @@ import { UnifiedCart } from '@/types/marketplace';
  * Requisitos:
  * 1. Crear cuenta en https://www.mercadopago.com.ar
  * 2. Obtener Access Token de la aplicación
- * 3. Guardar en .env.local: NEXT_PUBLIC_MP_PUBLIC_KEY
+ * 3. Guardar en .env.local: NEXT_PUBLIC_MP_ACCESS_TOKEN
+ *
+ * Soporta pagos para:
+ * - Tours (experiencias y actividades)
+ * - Marketplace (productos artesanales)
+ * - Delivery/Eat (comida a domicilio)
+ * - Stay (alojamiento)
+ * - Services (servicios generales)
  */
+
+export type PaymentCategory = 'tour' | 'marketplace' | 'delivery' | 'stay' | 'service';
+
+export interface PaymentItem {
+  title: string;
+  description?: string;
+  quantity: number;
+  unit_price: number;
+  category_id?: string;
+}
+
+export interface PaymentCustomer {
+  name: string;
+  email: string;
+  phone?: string;
+  identification?: {
+    type: string;
+    number: string;
+  };
+}
 
 export interface MercadoPagoPreference {
   external_reference: string; // Order ID
   items: Array<{
     title: string;
+    description?: string;
     quantity: number;
     currency_id: string;
     unit_price: number;
+    category_id?: string;
   }>;
   payer: {
     name: string;
@@ -41,6 +70,10 @@ export interface MercadoPagoPreference {
   notification_url: string;
   binary_mode: boolean;
   metadata?: Record<string, unknown>;
+  statement_descriptor?: string; // Texto que aparece en el extracto
+  expires?: boolean;
+  expiration_date_from?: string;
+  expiration_date_to?: string;
 }
 
 export class PaymentService {
@@ -48,8 +81,100 @@ export class PaymentService {
   private static ACCESS_TOKEN = process.env.NEXT_PUBLIC_MP_ACCESS_TOKEN || '';
 
   /**
-   * Crea una preferencia de pago en Mercado Pago
+   * Crea una preferencia de pago genérica para cualquier categoría
+   */
+  static async createPaymentPreference(
+    orderId: string,
+    items: PaymentItem[],
+    customer: PaymentCustomer,
+    category: PaymentCategory,
+    baseUrl: string = typeof window !== 'undefined' ? window.location.origin : 'https://santurist.vercel.app',
+    metadata?: Record<string, unknown>
+  ): Promise<{
+    preferenceId: string;
+    initPoint: string;
+  }> {
+    try {
+      // Mapear categoría a rutas específicas
+      const categoryPaths = {
+        tour: '/tours/payment',
+        marketplace: '/marketplace/checkout',
+        delivery: '/eat/delivery/checkout',
+        stay: '/stay/checkout',
+        service: '/services/checkout',
+      };
+
+      const basePath = categoryPaths[category];
+
+      // Convertir items al formato de Mercado Pago
+      const mpItems = items.map(item => ({
+        title: item.title,
+        description: item.description,
+        quantity: item.quantity,
+        currency_id: 'CLP',
+        unit_price: item.unit_price,
+        category_id: item.category_id,
+      }));
+
+      const preference: MercadoPagoPreference = {
+        external_reference: orderId,
+        items: mpItems,
+        payer: {
+          name: customer.name,
+          email: customer.email,
+          ...(customer.phone && {
+            phone: {
+              area_code: '56',
+              number: parseInt(customer.phone.replace(/\D/g, '')),
+            },
+          }),
+        },
+        back_urls: {
+          success: `${baseUrl}${basePath}/success`,
+          failure: `${baseUrl}${basePath}/failure`,
+          pending: `${baseUrl}${basePath}/pending`,
+        },
+        auto_return: 'approved',
+        notification_url: `${baseUrl}/api/webhooks/mercadopago`,
+        binary_mode: false, // Permitir pending para transferencias
+        statement_descriptor: 'SANTURIST',
+        metadata: {
+          category,
+          order_id: orderId,
+          ...metadata,
+        },
+      };
+
+      const response = await fetch(`${this.MP_API}/checkout/preferences`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify(preference),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(`Mercado Pago Error: ${JSON.stringify(error)}`);
+      }
+
+      const data = await response.json();
+
+      return {
+        preferenceId: data.id,
+        initPoint: data.init_point,
+      };
+    } catch (error) {
+      console.error('Error creating payment preference:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Crea una preferencia de pago en Mercado Pago (método legacy para marketplace)
    * Esta preferencia se usa para redirigir al usuario a pagar
+   * @deprecated Usar createPaymentPreference() en su lugar
    */
   static async createMercadoPagoPreference(
     orderId: string,

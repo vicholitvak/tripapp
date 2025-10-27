@@ -18,16 +18,12 @@ export default function CartPage() {
       return;
     }
 
-    setIsLoading(true);
-    try {
-      // For now, just redirect to a simple payment confirmation page
-      // In the future, this would integrate with Mercado Pago
-      router.push('/eat/delivery/payment/success');
-    } catch (error) {
-      console.error('Checkout error:', error);
-    } finally {
-      setIsLoading(false);
+    if (items.length === 0) {
+      return;
     }
+
+    // Redirigir a página de checkout
+    router.push('/eat/delivery/checkout');
   };
 
   return (

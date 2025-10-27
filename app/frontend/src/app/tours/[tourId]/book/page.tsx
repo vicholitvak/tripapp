@@ -20,9 +20,11 @@ import {
 } from 'lucide-react';
 import { Tour, TourInstance, TourBooking } from '@/types/tours';
 import { TourService } from '@/lib/services/tourService';
+import { TourBookingService } from '@/lib/services/tourBookingService';
 import { MOCK_TOURS } from '@/lib/seeds/toursSeed';
+import { Suspense } from 'react';
 
-export default function TourBookingPage() {
+function TourBookingContent() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -75,11 +77,14 @@ export default function TourBookingPage() {
     e.preventDefault();
 
     if (!tour || !instance || !user) return;
+    if (!acceptedTerms) {
+      alert('Debes aceptar los términos y condiciones para continuar');
+      return;
+    }
 
     setSubmitting(true);
 
     try {
-      // TODO: Implement actual booking creation with payment
       const booking: Partial<TourBooking> = {
         tourId: tour.id!,
         tourInstanceId: instance.id!,
@@ -101,26 +106,25 @@ export default function TourBookingPage() {
         },
         specialRequests: specialRequests || undefined,
         dietaryRestrictions: dietaryRestrictions.length > 0 ? dietaryRestrictions : undefined,
-        status: 'pending_payment',
-        payment: {
-          method: 'mercadopago',
-          status: 'pending',
-        },
         reviewSubmitted: false,
       };
 
-      console.log('Booking data:', booking);
+      // Crear booking y obtener link de pago de Mercado Pago
+      const { bookingId, initPoint } = await TourBookingService.createBookingWithPayment(
+        booking,
+        contactInfo.name,
+        contactInfo.email,
+        contactInfo.phone
+      );
 
-      // TODO: Create booking in Firebase
-      // const bookingId = await TourService.createBooking(booking);
+      // Guardar booking ID en localStorage para después del pago
+      localStorage.setItem('pending_tour_booking', bookingId);
 
-      // TODO: Redirect to payment gateway
-      // For now, redirect to success page
-      router.push(`/tours/success?booking=temp-${Date.now()}`);
+      // Redirigir a Mercado Pago
+      window.location.href = initPoint;
     } catch (error) {
       console.error('Error creating booking:', error);
       alert('Error al crear la reserva. Por favor intenta nuevamente.');
-    } finally {
       setSubmitting(false);
     }
   };
@@ -555,5 +559,17 @@ export default function TourBookingPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function TourBookingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">Cargando...</p>
+      </div>
+    }>
+      <TourBookingContent />
+    </Suspense>
   );
 }

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { ProviderService } from '@/lib/services/providerService';
 import { Provider } from '@/types/provider';
-import { CheckCircle, Edit, AlertCircle, Mail, Phone, Globe, Instagram } from 'lucide-react';
+import { CheckCircle, Edit, AlertCircle, MapPin, Mail, Phone, Globe, Instagram } from 'lucide-react';
 
 export default function MockReviewPage() {
   const router = useRouter();

@@ -4,9 +4,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useOnboarding } from '@/context/OnboardingContext';
 import { useAuth } from '@/context/AuthContext';
 import { AlertCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 
-export default function OnboardingWelcomePage() {
+function OnboardingWelcomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
@@ -204,5 +204,17 @@ export default function OnboardingWelcomePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OnboardingWelcomePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">Cargando...</p>
+      </div>
+    }>
+      <OnboardingWelcomeContent />
+    </Suspense>
   );
 }
