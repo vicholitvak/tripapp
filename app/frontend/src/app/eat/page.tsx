@@ -423,9 +423,9 @@ export default function Eat() {
             <div>
               <h4 className="font-semibold mb-4 text-white">¿Qué Hacer?</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><a href="/tours" className="hover:text-orange-400 transition-colors">Tours Guiados</a></li>
-                <li><a href="/eat" className="hover:text-orange-400 transition-colors">¿Qué Comer?</a></li>
-                <li><a href="/services" className="hover:text-orange-400 transition-colors">Servicios</a></li>
+                <li><Link href="/tours" className="hover:text-orange-400 transition-colors">Tours Guiados</Link></li>
+                <li><Link href="/eat" className="hover:text-orange-400 transition-colors">¿Qué Comer?</Link></li>
+                <li><Link href="/services" className="hover:text-orange-400 transition-colors">Servicios</Link></li>
               </ul>
             </div>
             <div>

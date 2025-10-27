@@ -2,6 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
+import Link from 'next/link';
 
 interface Booking {
   tourTitle: string;
@@ -36,9 +37,9 @@ function PaymentSuccessContent() {
             <p className="text-lg mb-2">Reserva confirmada: {booking.tourTitle}</p>
             <p className="text-lg mb-2">ID de Reserva: {bookingId}</p>
             <p className="text-lg mb-4">Fecha: {new Date(booking.date).toLocaleDateString()}</p>
-            <a href="/tours" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <Link href="/tours" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
               Ver Tours
-            </a>
+            </Link>
           </div>
         ) : (
           <p>Procesando confirmación...</p>
