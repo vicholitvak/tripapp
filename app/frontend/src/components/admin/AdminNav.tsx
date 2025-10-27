@@ -65,6 +65,12 @@ export default function AdminNav() {
       icon: <Home className="w-5 h-5" />,
       description: 'Onboarding Casa Voyage Hostel',
     },
+    {
+      href: '/admin/seed-tierra-gres',
+      label: 'Tierra Gres',
+      icon: <ShoppingBag className="w-5 h-5" />,
+      description: 'Onboarding Tierra Gres (Antonia)',
+    },
   ];
 
   const isActive = (href: string) => pathname === href;
