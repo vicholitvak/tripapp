@@ -14,7 +14,7 @@ firebase login
 
 ### 3. Inicializar proyecto
 ```bash
-firebase use hometaste-tlpog
+firebase use tripapp-8e9dc
 ```
 
 ### 4. Desplegar reglas de seguridad
@@ -26,7 +26,7 @@ firebase deploy --only firestore:indexes
 
 ### 5. Verificar en Firebase Console
 
-Ve a [Firebase Console](https://console.firebase.google.com/project/hometaste-tlpog/firestore/rules)
+Ve a [Firebase Console](https://console.firebase.google.com/project/tripapp-8e9dc/firestore/rules)
 
 Deberías ver las reglas activas. Si NO están, tu base de datos está DESPROTEGIDA.
 

@@ -59,7 +59,7 @@ firebase deploy --only storage:rules
 #### Paso 2: Verificar en Firebase Console
 
 1. Ve a [Firebase Console](https://console.firebase.google.com)
-2. Selecciona tu proyecto: `hometaste-tlpog`
+2. Selecciona tu proyecto: `tripapp-8e9dc` (TripApp)
 3. Firestore Database → Rules
 4. Verifica que las reglas estén activas
 
