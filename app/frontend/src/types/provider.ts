@@ -7,6 +7,7 @@ export type ProviderType =
   | 'tour_guide'     // Guía turístico
   | 'artisan'        // Artesano (joyería, cerámica, textiles)
   | 'transport'      // Taxi, transfer
+  | 'lodging'        // Alojamiento (hostels, campings, glampings)
   | 'service'        // Taller bicicletas, otros servicios
   | 'other';         // Otros
 

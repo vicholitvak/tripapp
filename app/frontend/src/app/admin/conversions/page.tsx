@@ -160,6 +160,7 @@ export default function ConversionsPage() {
       tour_guide: 'Guía Turístico',
       artisan: 'Artesano',
       transport: 'Transporte',
+      lodging: 'Alojamiento',
       service: 'Servicio',
       other: 'Otro',
     };
@@ -173,6 +174,7 @@ export default function ConversionsPage() {
       tour_guide: 'bg-green-100 text-green-800',
       artisan: 'bg-purple-100 text-purple-800',
       transport: 'bg-indigo-100 text-indigo-800',
+      lodging: 'bg-teal-100 text-teal-800',
       service: 'bg-pink-100 text-pink-800',
       other: 'bg-gray-100 text-gray-800',
     };

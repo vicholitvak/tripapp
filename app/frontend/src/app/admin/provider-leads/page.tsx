@@ -221,6 +221,7 @@ export default function ProviderLeadsPage() {
       tour_guide: 'Guía Turístico',
       artisan: 'Artesano',
       transport: 'Transporte',
+      lodging: 'Alojamiento',
       service: 'Servicio',
       other: 'Otro',
     };

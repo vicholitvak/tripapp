@@ -8,7 +8,8 @@ import {
   Mail,
   Activity,
   ShoppingBag,
-  CheckCircle
+  CheckCircle,
+  Home
 } from 'lucide-react';
 
 interface NavItem {
@@ -57,6 +58,12 @@ export default function AdminNav() {
       label: 'Marketplace',
       icon: <ShoppingBag className="w-5 h-5" />,
       description: 'Seed data del marketplace',
+    },
+    {
+      href: '/admin/seed-casa-voyage',
+      label: 'Casa Voyage',
+      icon: <Home className="w-5 h-5" />,
+      description: 'Onboarding Casa Voyage Hostel',
     },
   ];
 
