@@ -21,7 +21,7 @@ const statusConfig = {
     color: 'bg-blue-100 text-blue-800',
     icon: CheckCircle,
   },
-  in_progress: {
+  processing: {
     label: 'En Progreso',
     color: 'bg-purple-100 text-purple-800',
     icon: AlertTriangle,
@@ -277,7 +277,7 @@ export default function ProviderOrders() {
 
                   <div className="flex justify-between items-center">
                     <p className="text-xs text-gray-500">
-                      Creada: {new Date(order.createdAt).toLocaleDateString('es-CL')}
+                      Creada: {(order.createdAt instanceof Date ? order.createdAt : order.createdAt.toDate()).toLocaleDateString('es-CL')}
                     </p>
                     <div className="flex gap-2">
                       {order.status === 'pending' && (
@@ -298,13 +298,13 @@ export default function ProviderOrders() {
                       )}
                       {order.status === 'confirmed' && (
                         <button
-                          onClick={() => handleStatusUpdate(order.orderId, 'in_progress')}
+                          onClick={() => handleStatusUpdate(order.orderId, 'processing')}
                           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                         >
                           Marcar en Progreso
                         </button>
                       )}
-                      {order.status === 'in_progress' && (
+                      {order.status === 'processing' && (
                         <button
                           onClick={() => handleStatusUpdate(order.orderId, 'completed')}
                           className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"

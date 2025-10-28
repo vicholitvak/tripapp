@@ -29,8 +29,8 @@ export async function seedTierraGres() {
 
     // ========== 1. PROVIDER LEAD ==========
     const leadData: Omit<ProviderLead, 'id'> = {
-      type: 'tour-operator',
-      category: 'tour-operator',
+      type: 'artisan',
+      category: 'artisan',
 
       contactInfo: {
         name: '[COMPLETAR NOMBRE]',
@@ -47,7 +47,7 @@ export async function seedTierraGres() {
 
       status: 'new',
       priority: 'medium',
-      source: 'research',
+      source: 'other',
       isActive: true,
 
       createdBy: ADMIN_ID,
@@ -56,7 +56,7 @@ export async function seedTierraGres() {
 
       notes: 'No description found. Website: https://www.tierragres.cl | Instagram: @tierra_gres',
 
-      tags: ['tour-operator', 'auto-generated'],
+      tags: ['artisan', 'auto-generated'],
     };
 
     const leadRef = await adminDb.collection('providerLeads').add(leadData);
@@ -69,10 +69,10 @@ export async function seedTierraGres() {
       mockProviderId: `mock-${leadRef.id}`,
       recipientName: '[COMPLETAR]',
       businessName: 'Tierra Gres',
-      category: 'tour-operator',
+      category: 'artisan',
       email: 'contacto@tierragres.cl',
       customMessage: 'Nos encantaría que Tierra Gres formara parte de Santurist.',
-      type: 'tour-operator',
+      type: 'artisan',
       status: 'pending',
       createdBy: ADMIN_ID,
       createdAt: new Date(),

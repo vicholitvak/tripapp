@@ -29,8 +29,8 @@ export async function seedAtacamaDarkSky() {
 
     // ========== 1. PROVIDER LEAD ==========
     const leadData: Omit<ProviderLead, 'id'> = {
-      type: 'tour-operator',
-      category: 'tour-operator',
+      type: 'tour_guide',
+      category: 'tour_guide',
 
       contactInfo: {
         name: '[COMPLETAR NOMBRE]',
@@ -50,7 +50,7 @@ export async function seedAtacamaDarkSky() {
 
       status: 'new',
       priority: 'medium',
-      source: 'research',
+      source: 'other',
       isActive: true,
 
       createdBy: ADMIN_ID,

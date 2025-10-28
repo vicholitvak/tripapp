@@ -539,7 +539,7 @@ export default function SeedsPage() {
                       No hay seeds ejecutados
                     </h3>
                     <p className="text-gray-500 mb-6">
-                      Usa el tab "Generar Nuevo" para crear y ejecutar seeds
+                      Usa el tab &ldquo;Generar Nuevo&rdquo; para crear y ejecutar seeds
                     </p>
                     <button
                       onClick={() => setActiveTab('generate')}

@@ -95,7 +95,7 @@ export default function ProviderEarnings() {
       return acc;
     }, {} as Record<string, EarningsData>);
 
-    return Object.values(grouped).sort((a, b) => {
+    return (Object.values(grouped) as EarningsData[]).sort((a, b) => {
       const [aYear, aMonth] = a.month.split(' de ');
       const [bYear, bMonth] = b.month.split(' de ');
       return new Date(`${aMonth} ${aYear}`).getTime() - new Date(`${bMonth} ${bYear}`).getTime();
@@ -124,7 +124,7 @@ export default function ProviderEarnings() {
         pendingPayout,
         {
           accountNumber: '****1234',
-          accountType: 'checking',
+          accountType: 'cuenta_corriente',
           bankName: 'Banco Chile',
           accountHolder: user?.displayName || 'Provider',
         }
