@@ -1,16 +1,16 @@
 /**
- * Seed script para Tierra Gres
+ * Seed script para Tours Astronómicos en San Pedro de Atacama
  *
- * Información extraída de: https://www.tierragres.cl
+ * Información extraída de: https://www.atacamadarksky.cl
  * Fecha: 2025-10-27
  * Generado automáticamente desde Admin Panel
  *
  * Contacto:
- * - Email: contacto@tierragres.cl
- * - Teléfono: +569 85934514
- * - WhatsApp: 56985934514
- * - Instagram: @tierra_gres
- * - Ubicación: San Pedro de Atacama
+ * - Email: tu@email.com
+ * - Teléfono: +56 9 1234 5678
+ * - WhatsApp: 56950558761
+ * - Instagram: [COMPLETAR]
+ * - Ubicación: privada privilegiada
  */
 
 import { adminDb } from '@/lib/firebaseAdmin';
@@ -19,13 +19,13 @@ import { cleanupByBusinessName } from './seedCleanup';
 
 const ADMIN_ID = 'admin-seed';
 
-export async function seedTierraGres() {
-  console.log('🌟 Seeding Tierra Gres...');
+export async function seedAtacamaDarkSky() {
+  console.log('🌟 Seeding Tours Astronómicos en San Pedro de Atacama...');
 
   try {
     // ========== 0. CLEANUP EXISTING DATA ==========
-    console.log('Cleaning up existing Tierra Gres data...');
-    await cleanupByBusinessName('Tierra Gres');
+    console.log('Cleaning up existing Tours Astronómicos en San Pedro de Atacama data...');
+    await cleanupByBusinessName('Tours Astronómicos en San Pedro de Atacama');
 
     // ========== 1. PROVIDER LEAD ==========
     const leadData: Omit<ProviderLead, 'id'> = {
@@ -34,15 +34,18 @@ export async function seedTierraGres() {
 
       contactInfo: {
         name: '[COMPLETAR NOMBRE]',
-        businessName: 'Tierra Gres',
-        email: 'contacto@tierragres.cl',
-        phone: '+569 85934514',
-        whatsapp: '56985934514',
-        address: 'San Pedro de Atacama',
+        businessName: 'Tours Astronómicos en San Pedro de Atacama',
+        email: 'tu@email.com',
+        phone: '+56 9 1234 5678',
+        whatsapp: '56950558761',
+        address: 'privada privilegiada',
       },
 
       servicesOffered: [
-
+        'Service 1',
+        'Service 2',
+        'Service 3',
+        'Service 4',
       ],
 
       status: 'new',
@@ -54,7 +57,7 @@ export async function seedTierraGres() {
       createdAt: new Date() as any,
       updatedAt: new Date() as any,
 
-      notes: 'No description found. Website: https://www.tierragres.cl | Instagram: @tierra_gres',
+      notes: 'Descubre el cielo más puro del mundo con nuestros tours guiados. Website: https://www.atacamadarksky.cl',
 
       tags: ['tour-operator', 'auto-generated'],
     };
@@ -64,14 +67,14 @@ export async function seedTierraGres() {
 
     // ========== 2. INVITATION ==========
     const invitationData = {
-      code: `ATK-${new Date().getFullYear()}-TIERRAGRES-001`,
+      code: `ATK-${new Date().getFullYear()}-ATACAMADARKSKY-001`,
       linkedLeadId: leadRef.id,
       mockProviderId: `mock-${leadRef.id}`,
       recipientName: '[COMPLETAR]',
-      businessName: 'Tierra Gres',
+      businessName: 'Tours Astronómicos en San Pedro de Atacama',
       category: 'tour-operator',
-      email: 'contacto@tierragres.cl',
-      customMessage: 'Nos encantaría que Tierra Gres formara parte de Santurist.',
+      email: 'tu@email.com',
+      customMessage: 'Nos encantaría que Tours Astronómicos en San Pedro de Atacama formara parte de Santurist.',
       type: 'tour-operator',
       status: 'pending',
       createdBy: ADMIN_ID,
@@ -84,7 +87,7 @@ export async function seedTierraGres() {
 
     const invitationRef = await adminDb.collection('invitations').add(invitationData);
 
-    console.log('\n✨ Tierra Gres seeded successfully!');
+    console.log('\n✨ Tours Astronómicos en San Pedro de Atacama seeded successfully!');
     console.log('📋 Lead:', leadRef.id);
     console.log('✉️  Invitation:', invitationData.code);
 
@@ -103,17 +106,32 @@ export async function seedTierraGres() {
  * SERVICIOS ENCONTRADOS:
  *
 
+ * 1. Service 1
+ *    Extracted from website - please review and update
+ *    Precio: CLP 30.000
+ *    
+ *    
+
+ * 2. Service 2
+ *    Extracted from website - please review and update
+ *    Precio: CLP 120.000
+ *    
+ *    
+
+ * 3. Service 3
+ *    Extracted from website - please review and update
+ *    Precio: CLP 200.000
+ *    
+ *    
+
+ * 4. Service 4
+ *    Extracted from website - please review and update
+ *    Precio: CLP 15.000
+ *    
+ *    
+
  *
- * IMÁGENES (16):
- * 1. https://www.tierragres.cl/wp-content/uploads/2025/10/IMG_8358-800x600.jpg
- * 2. https://www.tierragres.cl/wp-content/uploads/2025/10/IMG_8326-800x600.jpg
- * 3. https://www.tierragres.cl/wp-content/uploads/2025/09/IMG_8312-800x600.jpg
- * 4. https://www.tierragres.cl/wp-content/uploads/2025/09/IMG_8260-800x600.jpg
- * 5. https://www.tierragres.cl/wp-content/uploads/2025/09/IMG_8273-800x600.jpg
- * 6. https://www.tierragres.cl/wp-content/uploads/2025/08/IMG_7842-800x600.jpg
- * 7. https://www.tierragres.cl/wp-content/uploads/2025/08/IMG_8073-800x600.jpg
- * 8. https://www.tierragres.cl/wp-content/uploads/2025/08/IMG_8115-800x600.jpg
- * 9. https://www.tierragres.cl/wp-content/uploads/2025/08/IMG_8133-800x600.jpg
- * 10. https://www.tierragres.cl/wp-content/uploads/2025/08/IMG_8194-800x600.jpg
- * ... y 6 más
+ * IMÁGENES (0):
+
+
  */

@@ -113,43 +113,14 @@ export default function AdminDashboard() {
     },
   ];
 
-  // Seeds section
+  // Seeds section - Unified seeds management
   const seedCards: AdminCard[] = [
     {
-      title: 'Seed Marketplace',
-      description: 'Inicializar el marketplace con datos de ejemplo',
-      href: '/admin/seed-marketplace',
-      icon: <Store className="w-8 h-8" />,
-      color: 'from-orange-500 to-orange-600',
-      seedKey: 'marketplace',
-      seeded: seedStatus?.marketplace,
-    },
-    {
-      title: 'Seed Casa Voyage',
-      description: 'Cargar datos del hostel Casa Voyage (Alojamiento)',
-      href: '/admin/seed-casa-voyage',
-      icon: <Home className="w-8 h-8" />,
-      color: 'from-teal-500 to-teal-600',
-      seedKey: 'casaVoyage',
-      seeded: seedStatus?.casaVoyage,
-    },
-    {
-      title: 'Seed Tierra Gres',
-      description: 'Cargar productos de cerámica de Tierra Gres (Marketplace)',
-      href: '/admin/seed-tierra-gres',
-      icon: <PackagePlus className="w-8 h-8" />,
-      color: 'from-amber-500 to-amber-600',
-      seedKey: 'tierraGres',
-      seeded: seedStatus?.tierraGres,
-    },
-    {
-      title: 'Seed Joyas Relmu',
-      description: 'Cargar joyas de Joyas Relmu (Marketplace)',
-      href: '/admin/seed-joyas-relmu',
-      icon: <Gem className="w-8 h-8" />,
-      color: 'from-pink-500 to-pink-600',
-      seedKey: 'joyasRelmu',
-      seeded: seedStatus?.joyasRelmu,
+      title: '🌱 Gestión de Seeds',
+      description: 'Ejecutar seeds existentes (Casa Voyage, Tierra Gres, Joyas Relmu, Atacama Dark Sky) o generar nuevos desde URLs',
+      href: '/admin/seeds',
+      icon: <Database className="w-8 h-8" />,
+      color: 'from-purple-500 to-pink-600',
     },
   ];
 

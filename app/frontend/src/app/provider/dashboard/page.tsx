@@ -88,17 +88,40 @@ export default function ProviderDashboard() {
 
         // Load stats
         const services = providerData.services || [];
-        const completedOrders = providerData.completedOrders || 0;
         const rating = providerData.rating || 0;
         const reviewCount = providerData.reviewCount || 0;
 
+        // Load real order and earnings data
+        let activeOrders = 0;
+        let completedOrders = 0;
+        let totalEarnings = 0;
+
+        if (providerData.id) {
+          try {
+            // Get provider orders
+            const providerOrders = await OrderService.getProviderOrders(providerData.id);
+            activeOrders = providerOrders.filter(
+              o => o.status === 'pending' || o.status === 'confirmed' || o.status === 'in_progress'
+            ).length;
+            completedOrders = providerOrders.filter(o => o.status === 'completed').length;
+
+            // Get earnings data
+            const earnings = await EarningsService.getEarnings(providerData.id);
+            totalEarnings = earnings?.totalRevenue || 0;
+          } catch (err) {
+            console.warn('Error loading orders/earnings:', err);
+            // Fallback to provider data
+            completedOrders = providerData.completedOrders || 0;
+          }
+        }
+
         const dashboardStats: DashboardStats = {
           totalListings: services.length,
-          activeOrders: 0, // TODO: Load from OrderService
-          totalEarnings: 0, // TODO: Load from EarningsService
+          activeOrders,
+          totalEarnings,
           averageRating: rating,
           totalReviews: reviewCount,
-          completedOrders: completedOrders,
+          completedOrders,
         };
 
         setStats(dashboardStats);

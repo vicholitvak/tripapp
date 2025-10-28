@@ -890,7 +890,8 @@ export default function MarketplacePage() {
                             {providerProducts.map(listing => (
                               <div
                                 key={listing.id}
-                                className="border border-gray-200 rounded-lg p-4 hover:border-orange-300 hover:shadow-md transition-all"
+                                onClick={() => router.push(`/marketplace/${listing.id}`)}
+                                className="border border-gray-200 rounded-lg p-4 hover:border-orange-300 hover:shadow-md transition-all cursor-pointer"
                               >
                                 <div className="flex gap-3">
                                   {/* Mini imagen */}
@@ -949,6 +950,7 @@ export default function MarketplacePage() {
             {filteredListings.map(listing => (
               <div
                 key={listing.id}
+                onClick={() => router.push(`/marketplace/${listing.id}`)}
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
               >
                 {/* Imagen */}
@@ -1011,7 +1013,10 @@ export default function MarketplacePage() {
                       ${listing.price.toLocaleString('es-CL')}
                     </div>
                     <button
-                      onClick={() => handleAddToCart(listing)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(listing);
+                      }}
                       className="bg-orange-600 text-white px-3 py-2 rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
                     >
                       <ShoppingCart className="w-4 h-4" />
@@ -1027,7 +1032,8 @@ export default function MarketplacePage() {
             {filteredListings.map(listing => (
               <div
                 key={listing.id}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow flex gap-6"
+                onClick={() => router.push(`/marketplace/${listing.id}`)}
+                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow flex gap-6 cursor-pointer"
               >
                 {/* Imagen */}
                 <div className="w-48 h-48 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden">
@@ -1081,7 +1087,10 @@ export default function MarketplacePage() {
                       ${listing.price.toLocaleString('es-CL')}
                     </div>
                     <button
-                      onClick={() => handleAddToCart(listing)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(listing);
+                      }}
                       className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition-colors font-medium flex items-center gap-2"
                     >
                       <ShoppingCart className="w-5 h-5" />

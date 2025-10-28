@@ -10,7 +10,10 @@ import {
   ShoppingBag,
   CheckCircle,
   Home,
-  Gem
+  Gem,
+  Sparkles,
+  Stars,
+  Trash2
 } from 'lucide-react';
 
 interface NavItem {
@@ -25,16 +28,22 @@ export default function AdminNav() {
 
   const navItems: NavItem[] = [
     {
+      href: '/admin/seeds',
+      label: '🌱 Seeds',
+      icon: <Sparkles className="w-5 h-5" />,
+      description: 'Gestionar seeds: ejecutar existentes o generar nuevos',
+    },
+    {
+      href: '/admin/cleanup-duplicates',
+      label: 'Limpiar',
+      icon: <Trash2 className="w-5 h-5" />,
+      description: 'Eliminar datos duplicados de seeds',
+    },
+    {
       href: '/admin/provider-leads',
       label: 'Leads',
       icon: <Users className="w-5 h-5" />,
       description: 'Base de datos de proveedores potenciales',
-    },
-    {
-      href: '/admin/mock-providers',
-      label: 'Mock Providers',
-      icon: <Users className="w-5 h-5" />,
-      description: 'Gestionar proveedores mock',
     },
     {
       href: '/admin/invitations',
@@ -53,30 +62,6 @@ export default function AdminNav() {
       label: 'Aprobaciones',
       icon: <CheckCircle className="w-5 h-5" />,
       description: 'Aprobar proveedores',
-    },
-    {
-      href: '/admin/seed-marketplace',
-      label: 'Marketplace',
-      icon: <ShoppingBag className="w-5 h-5" />,
-      description: 'Seed data del marketplace',
-    },
-    {
-      href: '/admin/seed-casa-voyage',
-      label: 'Casa Voyage',
-      icon: <Home className="w-5 h-5" />,
-      description: 'Onboarding Casa Voyage Hostel',
-    },
-    {
-      href: '/admin/seed-tierra-gres',
-      label: 'Tierra Gres',
-      icon: <ShoppingBag className="w-5 h-5" />,
-      description: 'Onboarding Tierra Gres (Antonia)',
-    },
-    {
-      href: '/admin/seed-joyas-relmu',
-      label: 'Joyas Relmu',
-      icon: <Gem className="w-5 h-5" />,
-      description: 'Onboarding Joyas Relmu (Javi)',
     },
   ];
 

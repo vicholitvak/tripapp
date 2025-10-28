@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run generate-seed:*)",
+      "Bash(npm run convert-webp:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []

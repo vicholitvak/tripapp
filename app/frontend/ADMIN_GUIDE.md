@@ -366,29 +366,111 @@ Cuando un proveedor completa el onboarding:
 
 ---
 
-## 🌱 Seed de Datos
+## 🤖 Sistema de Seeds Automáticos
 
-### Acceder al Seed
+### Generar Seed desde URL de Proveedor
 
 ```
-URL: /admin/seed-marketplace
+URL: /admin/generate-seed
 ```
 
-### ¿Qué hace el Seed?
+**Flujo de 3 Pasos:**
 
-Carga datos de prueba en la base de datos:
-- Proveedores demo
-- Productos y servicios
-- Tours y experiencias
-- Categorías
+#### Paso 1: Extraer Información
+1. Ingresar URL del sitio web del proveedor
+2. Ingresar nombre del seed (kebab-case)
+3. Click "Extraer Información"
+4. Revisar datos extraídos:
+   - Nombre del negocio
+   - Contacto (email, teléfono, WhatsApp)
+   - Redes sociales
+   - Servicios/productos ofrecidos
+   - Imágenes encontradas
 
-### Usar el Seed
+#### Paso 2: Generar Archivo Seed
+1. Revisar y corregir información si es necesario
+2. Click "Generar Archivo Seed"
+3. El sistema crea `src/lib/seeds/seedNombreProveedor.ts`
+4. Archivo incluye:
+   - Limpieza automática de duplicados
+   - ProviderLead con datos extraídos
+   - Invitation vinculada
+   - Timestamps automáticos
 
-1. **Click en "Cargar Datos de Prueba"**
-2. **Esperar a que termine** (puede tardar unos segundos)
-3. **Verificar en el marketplace** que los datos se cargaron
+#### Paso 3: Ejecutar Seed
+1. Click "Ejecutar Seed"
+2. El sistema:
+   - 🧹 Limpia datos existentes (evita duplicados)
+   - ✅ Crea ProviderLead en Firestore
+   - ✅ Crea Listings/Stays según el tipo
+   - ✅ Crea Invitation
+3. Copiar el código de invitación generado
 
-⚠️ **Advertencia**: Usar solo en desarrollo o para demos.
+**Ejemplo:**
+```
+URL: https://www.atacamadarksky.cl
+Seed Name: atacama-dark-sky
+Resultado: ATK-2025-NIGHTSKY-001
+```
+
+### Limpiar Datos Duplicados
+
+```
+URL: /admin/cleanup-duplicates
+```
+
+**Opciones:**
+
+1. **Limpiar Proveedor Específico**
+   - Seleccionar proveedor del dropdown
+   - Click "Limpiar Proveedor"
+   - Elimina solo los registros de ese proveedor
+
+2. **Limpiar TODO (⚠️ Usar con precaución)**
+   - Click "Limpiar TODO"
+   - Confirmar la acción
+   - Elimina TODOS los datos mock/seed
+
+**Usa esto cuando:**
+- Hay duplicados después de ejecutar seeds múltiples veces
+- Quieres empezar de cero con los datos
+- Necesitas resetear para pruebas
+
+### Seeds Existentes
+
+Los siguientes seeds ya están creados y listos para ejecutar:
+
+| Seed | Ruta Admin | Tipo | Crea |
+|------|-----------|------|------|
+| Casa Voyage | `/admin/seed-casa-voyage` | Stay | Lead + Stay (3 tipos) + Invitation |
+| Tierra Gres | `/admin/seed-tierra-gres` | Marketplace | Lead + 10 Listings + Invitation |
+| Joyas Relmu | `/admin/seed-joyas-relmu` | Marketplace | Lead + 8 Listings + Invitation |
+| Atacama Dark Sky | `/admin/seed-atacama-nightsky` | Tour | Lead + Invitation |
+
+**Para ejecutar:**
+1. Ir a la ruta del seed
+2. Click "Ejecutar Seed"
+3. Verificar resultados (Lead ID, Invitation Code)
+
+### CLI Tools (Opcional)
+
+**Generar seed desde terminal:**
+```bash
+npm run generate-seed <url> <seed-name>
+```
+
+**Convertir imágenes a WebP:**
+```bash
+npm run convert-webp <input-dir> <output-dir>
+```
+
+### Documentación Completa
+
+Ver `docs/SEED_AUTOMATION.md` para:
+- Guía completa del sistema
+- API endpoints
+- Troubleshooting
+- Mejores prácticas
 
 ---
 

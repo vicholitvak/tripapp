@@ -6,58 +6,9 @@ import { useAuth } from '@/context/AuthContext';
 import { Star, ThumbsUp, AlertCircle } from 'lucide-react';
 import ProviderLayout from '@/components/provider/ProviderLayout';
 import { ModernCard as Card } from '@/components/ui/modern-card';
-
-interface Review {
-  id: string;
-  customerId: string;
-  customerName: string;
-  rating: number;
-  comment: string;
-  helpful: number;
-  createdAt: Date | string;
-}
-
-const MOCK_REVIEWS: Review[] = [
-  {
-    id: 'REV-001',
-    customerId: 'cust-123',
-    customerName: 'Juan Pérez',
-    rating: 5,
-    comment:
-      'Excelente clase de cocina. El instructor fue muy paciente y los ingredientes de muy buena calidad.',
-    helpful: 12,
-    createdAt: '2024-10-24',
-  },
-  {
-    id: 'REV-002',
-    customerId: 'cust-456',
-    customerName: 'María García',
-    rating: 5,
-    comment: 'Increíble experiencia. Tour muy bien organizado y con mucha información interesante.',
-    helpful: 8,
-    createdAt: '2024-10-22',
-  },
-  {
-    id: 'REV-003',
-    customerId: 'cust-789',
-    customerName: 'Carlos López',
-    rating: 4,
-    comment:
-      'Muy buena comida. Solo una pequeña recomendación sería mejorar la presentación de los platos.',
-    helpful: 5,
-    createdAt: '2024-10-20',
-  },
-  {
-    id: 'REV-004',
-    customerId: 'cust-101',
-    customerName: 'Ana Rodríguez',
-    rating: 5,
-    comment:
-      'Perfecto para una cena corporativa. Profesional y delicioso. Volvería a contratar sin dudarlo.',
-    helpful: 15,
-    createdAt: '2024-10-18',
-  },
-];
+import { Review } from '@/types/marketplace';
+import { ReviewService } from '@/lib/services/reviewService';
+import { ProviderService } from '@/lib/services/providerService';
 
 function StarRating({ rating, size = 'default' }: { rating: number; size?: 'default' | 'large' }) {
   const sizeClass = size === 'large' ? 'w-5 h-5' : 'w-4 h-4';
@@ -78,8 +29,13 @@ function StarRating({ rating, size = 'default' }: { rating: number; size?: 'defa
 export default function ProviderReviews() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [reviews, setReviews] = useState<Review[]>(MOCK_REVIEWS);
-  const [loading, setLoading] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [stats, setStats] = useState<{
+    averageRating: number;
+    totalReviews: number;
+    ratingDistribution: { [key: number]: number };
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'recent' | 'rating' | 'helpful'>('recent');
 
   useEffect(() => {
@@ -88,13 +44,47 @@ export default function ProviderReviews() {
     }
   }, [user, authLoading, router]);
 
-  const avgRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
-  const ratingDistribution = {
-    5: reviews.filter((r) => r.rating === 5).length,
-    4: reviews.filter((r) => r.rating === 4).length,
-    3: reviews.filter((r) => r.rating === 3).length,
-    2: reviews.filter((r) => r.rating === 2).length,
-    1: reviews.filter((r) => r.rating === 1).length,
+  // Load reviews
+  useEffect(() => {
+    async function loadReviews() {
+      if (!user) return;
+
+      try {
+        setLoading(true);
+
+        // Get provider ID
+        const provider = await ProviderService.getByUserId(user.uid);
+        if (!provider?.id) {
+          console.error('Provider not found');
+          return;
+        }
+
+        // Get provider reviews
+        const providerReviews = await ReviewService.getProviderReviews(provider.id);
+        setReviews(providerReviews);
+
+        // Get stats
+        const providerStats = await ReviewService.getProviderStats(provider.id);
+        setStats(providerStats);
+      } catch (error) {
+        console.error('Error loading reviews:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (user && !authLoading) {
+      loadReviews();
+    }
+  }, [user, authLoading]);
+
+  const avgRating = stats?.averageRating.toFixed(1) || '0.0';
+  const ratingDistribution = stats?.ratingDistribution || {
+    5: 0,
+    4: 0,
+    3: 0,
+    2: 0,
+    1: 0,
   };
 
   const sortedReviews = [...reviews].sort((a, b) => {
@@ -105,7 +95,9 @@ export default function ProviderReviews() {
         return b.helpful - a.helpful;
       case 'recent':
       default:
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        const dateA = a.createdAt instanceof Date ? a.createdAt : a.createdAt.toDate();
+        const dateB = b.createdAt instanceof Date ? b.createdAt : b.createdAt.toDate();
+        return dateB.getTime() - dateA.getTime();
     }
   });
 
@@ -201,35 +193,57 @@ export default function ProviderReviews() {
           </Card>
         ) : (
           <div className="space-y-4">
-            {sortedReviews.map((review) => (
-              <Card key={review.id} className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900">{review.customerName}</h3>
-                    <p className="text-gray-600 text-sm">
-                      {new Date(review.createdAt).toLocaleDateString('es-CL', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </p>
+            {sortedReviews.map((review) => {
+              const displayDate = review.createdAt instanceof Date
+                ? review.createdAt
+                : review.createdAt.toDate();
+
+              return (
+                <Card key={review.id} className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900">
+                        Cliente #{review.customerId.slice(0, 8)}
+                      </h3>
+                      <p className="text-gray-600 text-sm">
+                        {displayDate.toLocaleDateString('es-CL', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                    <StarRating rating={review.rating} />
                   </div>
-                  <StarRating rating={review.rating} />
-                </div>
 
-                <p className="text-gray-700 mb-4">{review.comment}</p>
+                  <p className="text-gray-700 mb-4">{review.comment}</p>
 
-                <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
-                  <button className="flex items-center gap-2 text-gray-600 hover:text-orange-600 transition-colors text-sm font-medium">
-                    <ThumbsUp className="w-4 h-4" />
-                    Útil ({review.helpful})
-                  </button>
-                  <button className="text-gray-600 hover:text-red-600 transition-colors text-sm font-medium">
-                    Reportar
-                  </button>
-                </div>
-              </Card>
-            ))}
+                  {review.photos && review.photos.length > 0 && (
+                    <div className="grid grid-cols-4 gap-2 mb-4">
+                      {review.photos.map((photo, idx) => (
+                        <img
+                          key={idx}
+                          src={photo}
+                          alt={`Review photo ${idx + 1}`}
+                          className="w-full h-24 object-cover rounded"
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
+                    <div className="flex items-center gap-2 text-gray-600 text-sm font-medium">
+                      <ThumbsUp className="w-4 h-4" />
+                      Útil ({review.helpful})
+                    </div>
+                    <span className="text-gray-400">•</span>
+                    <span className="text-xs text-gray-500">
+                      Orden: #{review.orderId.slice(0, 8)}
+                    </span>
+                  </div>
+                </Card>
+              );
+            })}
           </div>
         )}
 

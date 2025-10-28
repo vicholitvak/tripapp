@@ -7,12 +7,12 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { Header } from '../../components/header';
 import { ModernCard } from '../../components/ui/modern-card';
-import { User, Mail, Phone, MapPin, Calendar, LogOut, Edit2, Save, X } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, LogOut, Edit2, Save, X, Shield } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { updateProfile } from 'firebase/auth';
 
 export default function ProfilePage() {
-  const { user, logout } = useAuth();
+  const { user, logout, role } = useAuth();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [displayName, setDisplayName] = useState('');
@@ -293,6 +293,15 @@ export default function ProfilePage() {
                 <ModernCard variant="elevated" className="p-6">
                   <h3 className="text-lg font-bold text-gray-900 mb-4">Acciones</h3>
                   <div className="space-y-3">
+                    {role === 'Admin' && (
+                      <Link
+                        href="/admin"
+                        className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg"
+                      >
+                        <Shield className="w-4 h-4" />
+                        <span>Panel de Administración</span>
+                      </Link>
+                    )}
                     <Link
                       href="/tours"
                       className="block w-full text-center px-4 py-2.5 bg-orange-100 hover:bg-orange-200 text-orange-600 rounded-lg font-medium transition-colors"

@@ -6,6 +6,9 @@ import { useAuth } from '@/context/AuthContext';
 import { TrendingUp, DollarSign, Calendar, AlertCircle } from 'lucide-react';
 import ProviderLayout from '@/components/provider/ProviderLayout';
 import { ModernCard as Card } from '@/components/ui/modern-card';
+import { ProviderService } from '@/lib/services/providerService';
+import { EarningsService } from '@/lib/services/earningsService';
+import { ProviderEarnings } from '@/types/marketplace';
 
 interface EarningsData {
   month: string;
@@ -15,17 +18,13 @@ interface EarningsData {
   orders: number;
 }
 
-const MOCK_EARNINGS: EarningsData[] = [
-  { month: 'Agosto', gross: 850000, commission: 127500, net: 722500, orders: 5 },
-  { month: 'Septiembre', gross: 1200000, commission: 180000, net: 1020000, orders: 8 },
-  { month: 'Octubre (actual)', gross: 680000, commission: 102000, net: 578000, orders: 4 },
-];
-
 export default function ProviderEarnings() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [earnings, setEarnings] = useState<EarningsData[]>(MOCK_EARNINGS);
-  const [loading, setLoading] = useState(false);
+  const [earnings, setEarnings] = useState<EarningsData[]>([]);
+  const [providerEarnings, setProviderEarnings] = useState<ProviderEarnings | null>(null);
+  const [providerId, setProviderId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -33,12 +32,112 @@ export default function ProviderEarnings() {
     }
   }, [user, authLoading, router]);
 
-  const totalEarnings = earnings.reduce((sum, e) => sum + e.net, 0);
+  // Fetch earnings data
+  useEffect(() => {
+    async function loadEarnings() {
+      if (!user) return;
+
+      try {
+        setLoading(true);
+
+        // Get provider ID
+        const provider = await ProviderService.getByUserId(user.uid);
+        if (!provider?.id) {
+          console.error('Provider not found');
+          return;
+        }
+
+        setProviderId(provider.id);
+
+        // Get earnings
+        const earningsData = await EarningsService.getEarnings(provider.id);
+        setProviderEarnings(earningsData);
+
+        // Group transactions by month
+        if (earningsData?.transactions) {
+          const monthlyData = groupTransactionsByMonth(earningsData.transactions);
+          setEarnings(monthlyData);
+        }
+      } catch (error) {
+        console.error('Error loading earnings:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (user && !authLoading) {
+      loadEarnings();
+    }
+  }, [user, authLoading]);
+
+  // Helper function to group transactions by month
+  function groupTransactionsByMonth(transactions: any[]): EarningsData[] {
+    const grouped = transactions.reduce((acc, t) => {
+      const date = t.date instanceof Date ? t.date : t.date.toDate();
+      const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+      const monthName = date.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
+
+      if (!acc[monthKey]) {
+        acc[monthKey] = {
+          month: monthName,
+          gross: 0,
+          commission: 0,
+          net: 0,
+          orders: 0,
+        };
+      }
+
+      acc[monthKey].gross += t.amount;
+      acc[monthKey].commission += t.commission;
+      acc[monthKey].net += t.revenue;
+      acc[monthKey].orders += 1;
+
+      return acc;
+    }, {} as Record<string, EarningsData>);
+
+    return Object.values(grouped).sort((a, b) => {
+      const [aYear, aMonth] = a.month.split(' de ');
+      const [bYear, bMonth] = b.month.split(' de ');
+      return new Date(`${aMonth} ${aYear}`).getTime() - new Date(`${bMonth} ${bYear}`).getTime();
+    });
+  }
+
+  const totalEarnings = providerEarnings?.totalRevenue || 0;
   const totalOrders = earnings.reduce((sum, e) => sum + e.orders, 0);
-  const avgOrderValue = totalEarnings / totalOrders;
+  const avgOrderValue = totalOrders > 0 ? totalEarnings / totalOrders : 0;
   const lastMonthEarnings = earnings.length > 0 ? earnings[earnings.length - 1].net : 0;
+  const pendingPayout = providerEarnings?.pendingPayout || 0;
 
   const commissionRate = 15; // 15% commission
+
+  // Handle payout request
+  const handlePayoutRequest = async () => {
+    if (!providerId || pendingPayout === 0) {
+      alert('No hay fondos disponibles para retirar');
+      return;
+    }
+
+    try {
+      // TODO: Add bank account selection/validation
+      await EarningsService.createPayoutRequest(
+        providerId,
+        pendingPayout,
+        {
+          accountNumber: '****1234',
+          accountType: 'checking',
+          bankName: 'Banco Chile',
+          accountHolder: user?.displayName || 'Provider',
+        }
+      );
+
+      alert('Solicitud de retiro creada exitosamente. Se procesará en 3-5 días hábiles.');
+      // Reload earnings data
+      window.location.reload();
+    } catch (error) {
+      console.error('Error creating payout request:', error);
+      alert('Error al crear la solicitud de retiro');
+    }
+  };
 
   if (authLoading || loading) {
     return (
@@ -192,10 +291,18 @@ export default function ProviderEarnings() {
               </p>
               <div className="bg-white p-4 rounded-lg inline-block mb-4">
                 <p className="text-sm text-gray-600">Disponible para Retirar</p>
-                <p className="text-2xl font-bold text-orange-600">${lastMonthEarnings.toLocaleString()} CLP</p>
+                <p className="text-2xl font-bold text-orange-600">${pendingPayout.toLocaleString()} CLP</p>
               </div>
             </div>
-            <button className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium">
+            <button
+              onClick={handlePayoutRequest}
+              disabled={pendingPayout === 0}
+              className={`px-6 py-3 rounded-lg transition-colors font-medium ${
+                pendingPayout > 0
+                  ? 'bg-orange-600 text-white hover:bg-orange-700'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
               Solicitar Retiro
             </button>
           </div>

@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { AlertCircle, Plus, Edit2, Trash2, Eye, EyeOff } from 'lucide-react';
+import { AlertCircle, Plus, Edit2, Trash2, Eye, EyeOff, Package } from 'lucide-react';
 import ProviderLayout from '@/components/provider/ProviderLayout';
 import { ModernCard as Card } from '@/components/ui/modern-card';
 import { Provider, Service } from '@/types/provider';
 import { ProviderService } from '@/lib/services/providerService';
+import { MarketplaceService } from '@/lib/services/marketplaceService';
+import { Listing } from '@/types/marketplace';
 
 interface FormService extends Service {
   isEditing?: boolean;
@@ -18,6 +20,7 @@ export default function ProviderListings() {
   const router = useRouter();
   const [provider, setProvider] = useState<Provider | null>(null);
   const [services, setServices] = useState<FormService[]>([]);
+  const [marketplaceListings, setMarketplaceListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -102,6 +105,16 @@ export default function ProviderListings() {
 
         setProvider(providerData);
         setServices(providerData.services || []);
+
+        // Load marketplace listings
+        if (providerData.id) {
+          try {
+            const listings = await MarketplaceService.getProviderListings(providerData.id);
+            setMarketplaceListings(listings);
+          } catch (err) {
+            console.warn('Error loading marketplace listings:', err);
+          }
+        }
       } catch (err) {
         console.error('Error loading provider:', err);
         setError('Error loading listings');
@@ -513,6 +526,65 @@ export default function ProviderListings() {
                 </div>
               </Card>
             ))}
+          </div>
+        )}
+
+        {/* Marketplace Listings Section */}
+        {marketplaceListings.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <Package className="w-6 h-6 text-orange-600" />
+              <h2 className="text-2xl font-bold text-gray-900">
+                Productos en el Marketplace
+              </h2>
+            </div>
+            <p className="text-gray-600">
+              {marketplaceListings.length} producto{marketplaceListings.length !== 1 ? 's' : ''} publicado{marketplaceListings.length !== 1 ? 's' : ''} en el marketplace
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {marketplaceListings.map((listing) => (
+                <Card key={listing.id} className="overflow-hidden">
+                  {listing.images && listing.images.length > 0 && (
+                    <img
+                      src={listing.images[0]}
+                      alt={listing.name}
+                      className="w-full h-48 object-cover"
+                    />
+                  )}
+                  <div className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-bold text-gray-900">{listing.name}</h3>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          listing.status === 'active'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        {listing.status === 'active' ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                      {listing.description}
+                    </p>
+                    <div className="flex justify-between items-center pt-3 border-t border-gray-200">
+                      <div>
+                        <p className="text-lg font-bold text-gray-900">
+                          ${listing.price.toLocaleString()} {listing.currency}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {listing.rating?.toFixed(1) || '0.0'} ⭐ ({listing.reviewCount || 0})
+                        </p>
+                      </div>
+                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                        {listing.baseType}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
         )}
       </div>

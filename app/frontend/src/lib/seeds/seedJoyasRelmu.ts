@@ -17,15 +17,10 @@
  * de leads para enviarle una invitación.
  */
 
-import {
-  collection,
-  addDoc,
-  Timestamp,
-  serverTimestamp,
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { adminDb } from '@/lib/firebaseAdmin';
 import { ProviderLead } from '@/types/provider';
 import { Listing } from '@/types/marketplace';
+import { cleanupProviderData } from './seedCleanup';
 
 const ADMIN_ID = 'admin-seed';
 
@@ -33,6 +28,20 @@ export async function seedJoyasRelmu() {
   console.log('💎 Seeding Joyas Relmu (Javi)...');
 
   try {
+    // ========== 0. CLEANUP EXISTING DATA ==========
+    console.log('Cleaning up existing Joyas Relmu data...');
+
+    // Find existing provider leads for Joyas Relmu
+    const existingLeadsSnapshot = await adminDb.collection('providerLeads')
+      .where('contactInfo.businessName', '==', 'Joyas Relmu')
+      .get();
+
+    // Clean up each existing lead and its associated data
+    for (const leadDoc of existingLeadsSnapshot.docs) {
+      const mockProviderId = `mock-${leadDoc.id}`;
+      await cleanupProviderData(mockProviderId, leadDoc.id);
+    }
+
     // ========== 1. PROVIDER LEAD ==========
     console.log('Creating ProviderLead for Joyas Relmu...');
 
@@ -70,8 +79,8 @@ export async function seedJoyasRelmu() {
 
       // Metadata
       createdBy: ADMIN_ID,
-      createdAt: serverTimestamp() as Timestamp,
-      updatedAt: serverTimestamp() as Timestamp,
+      createdAt: new Date() as any,
+      updatedAt: new Date() as any,
 
       // Notas
       notes: 'Investigado el 2025-10-27. Javiera "la Javi" - amiga del fundador. Joyera artesanal que trabaja plata 925 con piedras semipreciosas del altiplano. Instagram: @joyas_relmu | "Relmu" significa "arcoíris" en mapuche. Diseños inspirados en el desierto de Atacama con turquesa, lapislázuli, cuarzo rosa. Estilo único que combina tradición andina con diseño contemporáneo.',
@@ -80,7 +89,7 @@ export async function seedJoyasRelmu() {
       tags: ['joyeria', 'plata', 'artesania', 'piedras-naturales', 'atacama', 'relmu', 'referral', 'friend'],
     };
 
-    const leadRef = await addDoc(collection(db, 'providerLeads'), leadData);
+    const leadRef = await adminDb.collection('providerLeads').add(leadData);
     console.log(`✅ ProviderLead created with ID: ${leadRef.id}`);
 
     // ========== 2. MOCK MARKETPLACE LISTINGS ==========
@@ -250,11 +259,11 @@ export async function seedJoyasRelmu() {
           shippingCost: 3500,
         },
 
-        createdAt: serverTimestamp() as Timestamp,
-        updatedAt: serverTimestamp() as Timestamp,
+        createdAt: new Date() as any,
+        updatedAt: new Date() as any,
       };
 
-      const listingRef = await addDoc(collection(db, 'marketplaceListings'), listingData);
+      const listingRef = await adminDb.collection('marketplaceListings').add(listingData);
       listingIds.push(listingRef.id);
       console.log(`  ✅ Created listing: ${producto.name} (ID: ${listingRef.id})`);
     }
@@ -282,7 +291,7 @@ export async function seedJoyasRelmu() {
       status: 'pending',
 
       createdBy: ADMIN_ID,
-      createdAt: serverTimestamp(),
+      createdAt: new Date(),
 
       expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 días
 
@@ -291,7 +300,7 @@ export async function seedJoyasRelmu() {
       },
     };
 
-    const invitationRef = await addDoc(collection(db, 'invitations'), invitationData);
+    const invitationRef = await adminDb.collection('invitations').add(invitationData);
     console.log(`✅ Invitation created with ID: ${invitationRef.id}`);
     console.log(`   Code: ${invitationData.code}`);
     console.log(`   URL: /invite/${invitationData.code}`);

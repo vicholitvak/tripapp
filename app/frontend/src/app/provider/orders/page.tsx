@@ -3,65 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { AlertCircle, MapPin, Calendar, Users, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+import { AlertCircle, MapPin, Calendar, Users, CheckCircle, Clock, AlertTriangle, Package } from 'lucide-react';
 import ProviderLayout from '@/components/provider/ProviderLayout';
 import { ModernCard as Card } from '@/components/ui/modern-card';
-
-interface Order {
-  id: string;
-  customerId: string;
-  customerName: string;
-  serviceName: string;
-  status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
-  date: Date | string;
-  price: number;
-  currency: string;
-  location?: string;
-  notes?: string;
-  createdAt: Date | string;
-}
-
-const MOCK_ORDERS: Order[] = [
-  {
-    id: 'ORD-001',
-    customerId: 'cust-123',
-    customerName: 'Juan Pérez',
-    serviceName: 'Clases de Cocina',
-    status: 'confirmed',
-    date: '2024-10-28',
-    price: 45000,
-    currency: 'CLP',
-    location: 'San Isidro, Santiago',
-    notes: 'Clase para 4 personas',
-    createdAt: '2024-10-26',
-  },
-  {
-    id: 'ORD-002',
-    customerId: 'cust-456',
-    customerName: 'María García',
-    serviceName: 'Tour Gastronómico',
-    status: 'pending',
-    date: '2024-10-30',
-    price: 120000,
-    currency: 'CLP',
-    location: 'Centro, Santiago',
-    notes: 'Grupo de 6 personas',
-    createdAt: '2024-10-26',
-  },
-  {
-    id: 'ORD-003',
-    customerId: 'cust-789',
-    customerName: 'Carlos López',
-    serviceName: 'Catering Corporativo',
-    status: 'completed',
-    date: '2024-10-25',
-    price: 250000,
-    currency: 'CLP',
-    location: 'Providencia, Santiago',
-    notes: 'Evento corporativo 30 personas',
-    createdAt: '2024-10-20',
-  },
-];
+import { ProviderOrder, OrderStatus } from '@/types/marketplace';
+import { OrderService } from '@/lib/services/orderService';
+import { ProviderService } from '@/lib/services/providerService';
 
 const statusConfig = {
   pending: {
@@ -94,15 +41,48 @@ const statusConfig = {
 export default function ProviderOrders() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS);
-  const [loading, setLoading] = useState(false);
+  const [orders, setOrders] = useState<ProviderOrder[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
+  const [providerId, setProviderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/signin');
     }
   }, [user, authLoading, router]);
+
+  // Fetch provider data and orders
+  useEffect(() => {
+    async function loadOrders() {
+      if (!user) return;
+
+      try {
+        setLoading(true);
+
+        // Get provider ID from user
+        const provider = await ProviderService.getByUserId(user.uid);
+        if (!provider?.id) {
+          console.error('Provider not found');
+          return;
+        }
+
+        setProviderId(provider.id);
+
+        // Get provider orders
+        const providerOrders = await OrderService.getProviderOrders(provider.id);
+        setOrders(providerOrders);
+      } catch (error) {
+        console.error('Error loading orders:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (user && !authLoading) {
+      loadOrders();
+    }
+  }, [user, authLoading]);
 
   const filteredOrders = orders.filter((order) => {
     if (filter === 'all') return true;
@@ -115,7 +95,26 @@ export default function ProviderOrders() {
     completed: orders.filter((o) => o.status === 'completed').length,
     revenue: orders
       .filter((o) => o.status === 'completed')
-      .reduce((sum, o) => sum + o.price, 0),
+      .reduce((sum, o) => sum + o.providerRevenue, 0),
+  };
+
+  // Handle status update
+  const handleStatusUpdate = async (orderId: string, newStatus: OrderStatus) => {
+    if (!providerId) return;
+
+    try {
+      await OrderService.updateProviderOrderStatus(orderId, providerId, newStatus);
+
+      // Update local state
+      setOrders(orders.map(order =>
+        order.orderId === orderId
+          ? { ...order, status: newStatus }
+          : order
+      ));
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      alert('Error al actualizar el estado de la orden');
+    }
   };
 
   if (authLoading || loading) {
@@ -197,44 +196,84 @@ export default function ProviderOrders() {
               const statusInfo = statusConfig[order.status];
               const StatusIcon = statusInfo.icon;
 
+              // Get first item for display (or combine them)
+              const firstItem = order.items[0];
+              const hasMultipleItems = order.items.length > 1;
+
               return (
-                <Card key={order.id} className="p-6">
+                <Card key={order.orderId} className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-bold text-gray-900">{order.serviceName}</h3>
+                        <h3 className="text-lg font-bold text-gray-900">
+                          Orden #{order.orderId.slice(0, 8)}
+                        </h3>
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusInfo.color}`}>
                           {statusInfo.label}
                         </span>
                       </div>
-                      <p className="text-gray-600">Cliente: {order.customerName}</p>
+                      <p className="text-gray-600">
+                        {hasMultipleItems
+                          ? `${order.items.length} productos/servicios`
+                          : firstItem?.listingName || 'Sin nombre'}
+                      </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-gray-900">
-                        ${order.price.toLocaleString()}
+                      <p className="text-sm text-gray-600">
+                        Subtotal: ${order.subtotal.toLocaleString('es-CL')}
                       </p>
-                      <p className="text-gray-500 text-sm">{order.currency}</p>
+                      <p className="text-sm text-gray-500">
+                        Comisión: -${order.commission.toLocaleString('es-CL')}
+                      </p>
+                      <p className="text-2xl font-bold text-green-700 mt-1">
+                        ${order.providerRevenue.toLocaleString('es-CL')}
+                      </p>
+                      <p className="text-xs text-gray-500">Tu ganancia</p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 text-sm text-gray-600 py-4 border-y border-gray-200">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 flex-shrink-0" />
-                      <span>{new Date(order.date).toLocaleDateString('es-CL')}</span>
+                  {/* Items List */}
+                  <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Package className="w-4 h-4 text-gray-600" />
+                      <h4 className="font-semibold text-sm text-gray-900">Productos/Servicios:</h4>
                     </div>
-                    {order.location && (
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 flex-shrink-0" />
-                        <span>{order.location}</span>
-                      </div>
-                    )}
-                    {order.notes && (
-                      <div className="flex items-start gap-2">
-                        <Users className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                        <span>{order.notes}</span>
-                      </div>
-                    )}
+                    <div className="space-y-2">
+                      {order.items.map((item, idx) => (
+                        <div key={idx} className="flex justify-between items-start text-sm">
+                          <div className="flex-1">
+                            <p className="text-gray-900 font-medium">{item.listingName}</p>
+                            {item.serviceDate && (
+                              <p className="text-gray-600 text-xs flex items-center gap-1 mt-1">
+                                <Calendar className="w-3 h-3" />
+                                {new Date(item.serviceDate).toLocaleDateString('es-CL')}
+                                {item.serviceTime && ` a las ${item.serviceTime}`}
+                              </p>
+                            )}
+                            {item.serviceNotes && (
+                              <p className="text-gray-600 text-xs mt-1">{item.serviceNotes}</p>
+                            )}
+                          </div>
+                          <div className="text-right ml-4">
+                            <p className="text-gray-900">
+                              {item.quantity} × ${item.price.toLocaleString('es-CL')}
+                            </p>
+                            <p className="text-gray-600 font-medium">
+                              ${(item.quantity * item.price).toLocaleString('es-CL')}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
+
+                  {order.notes && (
+                    <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                      <p className="text-sm text-blue-900">
+                        <strong>Nota:</strong> {order.notes}
+                      </p>
+                    </div>
+                  )}
 
                   <div className="flex justify-between items-center">
                     <p className="text-xs text-gray-500">
@@ -243,27 +282,36 @@ export default function ProviderOrders() {
                     <div className="flex gap-2">
                       {order.status === 'pending' && (
                         <>
-                          <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                          <button
+                            onClick={() => handleStatusUpdate(order.orderId, 'confirmed')}
+                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                          >
                             Confirmar
                           </button>
-                          <button className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium">
+                          <button
+                            onClick={() => handleStatusUpdate(order.orderId, 'cancelled')}
+                            className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium"
+                          >
                             Rechazar
                           </button>
                         </>
                       )}
                       {order.status === 'confirmed' && (
-                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                        <button
+                          onClick={() => handleStatusUpdate(order.orderId, 'in_progress')}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                        >
                           Marcar en Progreso
                         </button>
                       )}
                       {order.status === 'in_progress' && (
-                        <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                        <button
+                          onClick={() => handleStatusUpdate(order.orderId, 'completed')}
+                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                        >
                           Marcar Completada
                         </button>
                       )}
-                      <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
-                        Detalles
-                      </button>
                     </div>
                   </div>
                 </Card>

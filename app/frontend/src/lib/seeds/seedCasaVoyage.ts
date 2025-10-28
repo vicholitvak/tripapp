@@ -14,15 +14,10 @@
  * eventualmente enviarles una invitación real.
  */
 
-import {
-  collection,
-  addDoc,
-  Timestamp,
-  serverTimestamp,
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { adminDb } from '@/lib/firebaseAdmin';
 import { ProviderLead } from '@/types/provider';
 import { Stay } from '@/types/stay';
+import { cleanupByBusinessName } from './seedCleanup';
 
 const ADMIN_ID = 'admin-seed'; // ID temporal del admin que crea estos seeds
 
@@ -30,6 +25,10 @@ export async function seedCasaVoyage() {
   console.log('🏠 Seeding Casa Voyage Hostel...');
 
   try {
+    // ========== 0. CLEANUP EXISTING DATA ==========
+    console.log('Cleaning up existing Casa Voyage data...');
+    await cleanupByBusinessName('Casa Voyage Hostel');
+
     // ========== 1. PROVIDER LEAD ==========
     console.log('Creating ProviderLead for Casa Voyage...');
 
@@ -66,8 +65,8 @@ export async function seedCasaVoyage() {
 
       // Metadata
       createdBy: ADMIN_ID,
-      createdAt: serverTimestamp() as Timestamp,
-      updatedAt: serverTimestamp() as Timestamp,
+      createdAt: new Date() as any,
+      updatedAt: new Date() as any,
 
       // Notas (aquí podemos incluir info extra como instagram, website, rating)
       notes: 'Investigado el 2025-10-27. Negocio real con excelente rating (9.0/10 con 1,152 reviews en Booking.com). Modelo híbrido interesante: hostel tradicional + domos geodésicos. Instagram: @casavoyagehostel | Website: https://casavoyagehostel.com | Características: Piscina, jardín, arte, biblioteca, muro de escalada, mesa de pool, fogatas. Perfecto para invitar a la plataforma.',
@@ -76,7 +75,7 @@ export async function seedCasaVoyage() {
       tags: ['hostel', 'glamping', 'domos', 'backpackers', 'art', 'eco-friendly', 'high-rating'],
     };
 
-    const leadRef = await addDoc(collection(db, 'providerLeads'), leadData);
+    const leadRef = await adminDb.collection('providerLeads').add(leadData);
     console.log(`✅ ProviderLead created with ID: ${leadRef.id}`);
 
     // ========== 2. MOCK STAY ==========
@@ -276,11 +275,11 @@ export async function seedCasaVoyage() {
       tags: ['backpackers', 'social', 'art', 'eco-friendly', 'domes', 'pool', 'cultural'],
 
       // Metadata
-      createdAt: serverTimestamp() as Timestamp,
-      updatedAt: serverTimestamp() as Timestamp,
+      createdAt: new Date() as any,
+      updatedAt: new Date() as any,
     };
 
-    const stayRef = await addDoc(collection(db, 'stays'), stayData);
+    const stayRef = await adminDb.collection('stays').add(stayData);
     console.log(`✅ Mock Stay created with ID: ${stayRef.id}`);
 
     // ========== 3. INVITATION ==========
@@ -304,7 +303,7 @@ export async function seedCasaVoyage() {
       status: 'pending',
 
       createdBy: ADMIN_ID,
-      createdAt: serverTimestamp(),
+      createdAt: new Date(),
 
       expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 días
 
@@ -313,7 +312,7 @@ export async function seedCasaVoyage() {
       },
     };
 
-    const invitationRef = await addDoc(collection(db, 'invitations'), invitationData);
+    const invitationRef = await adminDb.collection('invitations').add(invitationData);
     console.log(`✅ Invitation created with ID: ${invitationRef.id}`);
     console.log(`   Code: ${invitationData.code}`);
     console.log(`   URL: /invite/${invitationData.code}`);

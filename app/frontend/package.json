@@ -7,7 +7,9 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "seed-all": "tsx scripts/run-seeds.ts"
+    "seed-all": "tsx scripts/run-seeds.ts",
+    "generate-seed": "tsx scripts/generate-seed.ts",
+    "convert-webp": "tsx scripts/convert-images-to-webp.ts"
   },
   "dependencies": {
     "firebase": "^12.3.0",

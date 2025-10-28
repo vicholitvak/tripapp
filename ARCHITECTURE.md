@@ -1,18 +1,19 @@
 # 🏗️ Santurist Architecture - Development Progress
 
-**Last Updated:** October 26, 2025
-**Overall Progress:** 60% Complete
+**Last Updated:** October 27, 2025
+**Overall Progress:** 65% Complete
 
 ---
 
 ## 📊 Progress Dashboard
 
 ```
-████████████████████░░░░░░░░░░░░░░░░  60%
+█████████████████████░░░░░░░░░░░░░░  65%
 
 Phase 1: Moai Integration          ✅ 100% Complete
 Phase 2: Provider Onboarding       ✅ 100% Complete
 Phase 3: Unified Marketplace       ✅ 100% Complete
+Phase 3.5: Seed Automation         ✅ 100% Complete
 Phase 4: Provider Dashboard        🔄  0% Complete
 Phase 5: Advanced Features         ⏳  0% Planned
 ```
@@ -127,6 +128,87 @@ Phase 5: Advanced Features         ⏳  0% Planned
 **Remaining Work:** NONE - Phase Complete
 
 **Next Blocking Issues:** None - Ready for provider testing
+
+---
+
+## 🤖 Phase 3.5: Seed Automation System ✅ 100%
+
+**Status:** PRODUCTION READY
+
+### Components
+
+| Component | Status | Completion | Notes |
+|-----------|--------|------------|-------|
+| Web Scraping API | ✅ | 100% | `/api/scrape-provider` |
+| Seed Generator API | ✅ | 100% | `/api/admin/generate-seed-file` |
+| Seed Executor API | ✅ | 100% | `/api/admin/execute-seed` |
+| Admin UI (3-step) | ✅ | 100% | `/admin/generate-seed` |
+| Cleanup Utility | ✅ | 100% | `src/lib/seeds/seedCleanup.ts` |
+| Cleanup Admin Page | ✅ | 100% | `/admin/cleanup-duplicates` |
+| Image Converter CLI | ✅ | 100% | `scripts/convert-images-to-webp.ts` |
+| Seed Generator CLI | ✅ | 100% | `scripts/generate-seed.ts` |
+| Firestore Indexes | ✅ | 100% | `firestore.indexes.json` + deployed |
+
+### Features Implemented
+
+**Automated Seed Generation:**
+- ✅ Web scraping from provider URLs
+- ✅ Automatic data extraction (contact, services, images)
+- ✅ TypeScript seed file generation
+- ✅ Seed execution from admin panel
+- ✅ Image download and webp conversion
+
+**Duplicate Prevention System:**
+- ✅ Automatic cleanup before seed execution
+- ✅ `cleanupByBusinessName()` - Clean specific provider
+- ✅ `cleanupProviderData()` - Clean by mockProviderId
+- ✅ `cleanupAllMockData()` - Clean all mock data
+- ✅ Admin page for manual cleanup
+- ✅ All seeds updated with auto-cleanup
+
+**Database Optimization:**
+- ✅ Firestore composite indexes configured
+- ✅ 9 indexes created for optimal query performance
+- ✅ Documented in `docs/FIRESTORE_INDEXES.md`
+- ✅ Auto-deployment via Firebase CLI
+
+**Seeds with Auto-Cleanup:**
+- ✅ `seedCasaVoyage` - Stay (hybrid: hostel + domos)
+- ✅ `seedTierraGres` - 10 ceramic products
+- ✅ `seedJoyasRelmu` - 8 jewelry products
+- ✅ `seedAtacamaDarkSky` - Tour operator lead
+
+### Technical Details
+
+```typescript
+Seed Generation Flow:
+1. Extract: /api/scrape-provider
+   → Parse HTML, extract data
+2. Generate: /api/admin/generate-seed-file
+   → Create TypeScript file with cleanup
+3. Execute: /api/admin/execute-seed
+   → Cleanup → Create → Success
+
+Cleanup Functions:
+- cleanupByBusinessName('Casa Voyage Hostel')
+- cleanupProviderData('mock-abc123', 'lead-xyz')
+- cleanupAllMockData() // ⚠️ Deletes everything
+
+Admin Pages:
+- /admin/generate-seed       (3-step wizard)
+- /admin/cleanup-duplicates  (manual cleanup)
+
+Firestore Indexes:
+- Deployed: 9 composite indexes
+- Collections: marketplaceListings, stays, tours, bookings
+- Command: firebase deploy --only firestore:indexes
+```
+
+**Remaining Work:** NONE - Phase Complete
+
+**Documentation:**
+- `docs/SEED_AUTOMATION.md` - Complete automation guide
+- `docs/FIRESTORE_INDEXES.md` - Index documentation
 
 ---
 
