@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { TourBookingService } from '@/lib/services/tourBookingService';
 import { DeliveryBookingService } from '@/lib/services/deliveryBookingService';
 import { OrderService } from '@/lib/services/orderService';
+import { EmailService } from '@/lib/services/emailService';
+import { ProviderService } from '@/lib/services/providerService';
 
 /**
  * Webhook de Mercado Pago
@@ -18,6 +20,16 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     console.log('Webhook recibido:', body);
+
+    // Verificar firma de Mercado Pago (seguridad)
+    const xSignature = request.headers.get('x-signature');
+    const xRequestId = request.headers.get('x-request-id');
+
+    if (xSignature && xRequestId) {
+      // TODO: Implementar verificación de firma según docs de MP
+      // https://www.mercadopago.com.ar/developers/es/docs/your-integrations/notifications/webhooks#verificar-la-firma
+      console.log('Webhook signature:', xSignature);
+    }
 
     // Obtener tipo de notificación
     const { type, action, data } = body;
@@ -100,10 +112,69 @@ export async function POST(request: NextRequest) {
 
         case 'marketplace':
         case 'stay':
-        case 'service':
-          // TODO: Implementar actualización para otras categorías
-          console.log(`Categoría ${category} no implementada aún para ${externalReference}`);
+        case 'service': {
+          // Marketplace orders use OrderService
+          if (status === 'approved') {
+            // Confirm payment and update order status
+            await OrderService.confirmPayment(externalReference, paymentId.toString());
+            console.log(`Marketplace order ${externalReference} payment confirmed`);
+
+            // Send confirmation emails
+            try {
+              // Get order details
+              const order = await OrderService.getById(externalReference);
+
+              if (order) {
+                // Send email to customer
+                await EmailService.sendOrderConfirmation({
+                  orderId: order.id!,
+                  customerEmail: order.customerEmail,
+                  customerName: order.customerEmail.split('@')[0], // Fallback to email
+                  items: order.providerOrders.flatMap(po => po.items.map(item => ({
+                    name: item.listingName,
+                    quantity: item.quantity,
+                    price: item.price,
+                  }))),
+                  total: order.total,
+                  currency: 'CLP',
+                });
+
+                // Send notification to each provider
+                for (const providerOrder of order.providerOrders) {
+                  try {
+                    const provider = await ProviderService.getById(providerOrder.providerId);
+                    if (provider?.personalInfo?.email) {
+                      await EmailService.sendNewOrderToProvider(
+                        provider.personalInfo.email,
+                        provider.personalInfo.displayName || 'Proveedor',
+                        order.id!,
+                        providerOrder.items.map(item => ({
+                          name: item.listingName,
+                          quantity: item.quantity,
+                        })),
+                        providerOrder.subtotal,
+                        'CLP'
+                      );
+                    }
+                  } catch (err) {
+                    console.error('Error sending provider email:', err);
+                    // Continue with other providers even if one fails
+                  }
+                }
+
+                console.log(`Confirmation emails sent for order ${externalReference}`);
+              }
+            } catch (emailError) {
+              console.error('Error sending confirmation emails:', emailError);
+              // Don't fail the webhook if emails fail
+            }
+          } else if (status === 'rejected' || status === 'cancelled') {
+            // Cancel order
+            await OrderService.updateStatus(externalReference, 'cancelled');
+            console.log(`Marketplace order ${externalReference} cancelled due to payment failure`);
+          }
           break;
+        }
 
         default:
           console.log(`Categoría desconocida: ${category}`);
