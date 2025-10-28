@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { AlertCircle, Loader, CheckCircle, ShoppingBag } from 'lucide-react';
-import { seedTierraGres } from '@/lib/seeds/seedTierraGres';
 import Link from 'next/link';
 
 export default function SeedTierraGresPage() {
@@ -47,7 +46,16 @@ export default function SeedTierraGresPage() {
     setResult(null);
 
     try {
-      const seedResult = await seedTierraGres();
+      const response = await fetch('/api/admin/seed-tierra-gres', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to seed Tierra Gres');
+      }
+
+      const seedResult = await response.json();
       setResult(seedResult);
       setMessage({
         type: 'success',

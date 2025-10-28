@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { AlertCircle, Loader, CheckCircle, Stars } from 'lucide-react';
-import { seedAtacamaDarkSky } from '@/lib/seeds/seedAtacamaDarkSky';
 import Link from 'next/link';
 
 export default function SeedAtacamaNightSkyPage() {
@@ -37,7 +36,16 @@ export default function SeedAtacamaNightSkyPage() {
     setResult(null);
 
     try {
-      const seedResult = await seedAtacamaDarkSky();
+      const response = await fetch('/api/admin/seed-atacama-nightsky', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to seed Atacama Dark Sky');
+      }
+
+      const seedResult = await response.json();
       setResult(seedResult);
       setMessage({
         type: 'success',

@@ -111,7 +111,7 @@ function updateSeedRegistry(seedName: string, className: string): void {
   }
 
   // 2. Agregar entradas al seedRegistry
-  const registryPattern = /export const seedRegistry: SeedRegistry = \{([^}]+)\};/s;
+  const registryPattern = /export const seedRegistry: SeedRegistry = \{([\s\S]+?)\};/;
   const registryMatch = content.match(registryPattern);
 
   if (registryMatch) {
@@ -127,7 +127,7 @@ function updateSeedRegistry(seedName: string, className: string): void {
   }
 
   // 3. Agregar a la lista de seeds disponibles
-  const listPattern = /export function listAvailableSeeds\(\): string\[\] \{\s+return \[([^\]]+)\];/s;
+  const listPattern = /export function listAvailableSeeds\(\): string\[\] \{[\s\S]*?return \[([\s\S]*?)\];/;
   const listMatch = content.match(listPattern);
 
   if (listMatch) {

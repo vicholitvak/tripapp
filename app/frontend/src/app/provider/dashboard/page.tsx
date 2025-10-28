@@ -101,7 +101,7 @@ export default function ProviderDashboard() {
             // Get provider orders
             const providerOrders = await OrderService.getProviderOrders(providerData.id);
             activeOrders = providerOrders.filter(
-              o => o.status === 'pending' || o.status === 'confirmed' || o.status === 'in_progress'
+              o => o.status === 'pending' || o.status === 'confirmed' || o.status === 'processing'
             ).length;
             completedOrders = providerOrders.filter(o => o.status === 'completed').length;
 

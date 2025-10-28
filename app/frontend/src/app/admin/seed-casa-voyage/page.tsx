@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { AlertCircle, Loader, CheckCircle, Home } from 'lucide-react';
-import { seedCasaVoyage } from '@/lib/seeds/seedCasaVoyage';
 import Link from 'next/link';
 
 export default function SeedCasaVoyagePage() {
@@ -39,7 +38,16 @@ export default function SeedCasaVoyagePage() {
     setResult(null);
 
     try {
-      const seedResult = await seedCasaVoyage();
+      const response = await fetch('/api/admin/seed-casa-voyage', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to seed Casa Voyage');
+      }
+
+      const seedResult = await response.json();
       setResult(seedResult);
       setMessage({
         type: 'success',

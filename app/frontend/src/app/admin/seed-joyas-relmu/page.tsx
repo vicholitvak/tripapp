@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { AlertCircle, Loader, CheckCircle, Gem } from 'lucide-react';
-import { seedJoyasRelmu } from '@/lib/seeds/seedJoyasRelmu';
 import Link from 'next/link';
 
 export default function SeedJoyasRelmuPage() {
@@ -47,7 +46,16 @@ export default function SeedJoyasRelmuPage() {
     setResult(null);
 
     try {
-      const seedResult = await seedJoyasRelmu();
+      const response = await fetch('/api/admin/seed-joyas-relmu', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to seed Joyas Relmu');
+      }
+
+      const seedResult = await response.json();
       setResult(seedResult);
       setMessage({
         type: 'success',

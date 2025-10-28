@@ -8,7 +8,7 @@ import ProviderLayout from '@/components/provider/ProviderLayout';
 import { ModernCard as Card } from '@/components/ui/modern-card';
 import { ProviderService } from '@/lib/services/providerService';
 import { EarningsService } from '@/lib/services/earningsService';
-import { ProviderEarnings } from '@/types/marketplace';
+import type { ProviderEarnings } from '@/types/marketplace';
 
 interface EarningsData {
   month: string;

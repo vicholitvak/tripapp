@@ -1,15 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { AlertCircle, Loader, CheckCircle, Trash2, RefreshCw } from 'lucide-react';
-import { seedMarketplace, clearMarketplace, getSeedStats } from '@/lib/seeds/seedMarketplace';
 
 export default function SeedMarketplacePage() {
   const { user, role } = useAuth();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
-  const [stats, setStats] = useState(getSeedStats());
+  const [stats, setStats] = useState({ totalListings: 0, totalRevenue: 0, providers: [] as Array<{ id: string; name: string; category: string; products: number }> });
+
+  // Load stats on mount
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const response = await fetch('/api/admin/seed-marketplace');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    };
+
+    if (user && role === 'Admin') {
+      loadStats();
+    }
+  }, [user, role]);
 
   if (!user || role !== 'Admin') {
     return (
@@ -30,12 +48,29 @@ export default function SeedMarketplacePage() {
 
     setLoading(true);
     try {
-      const result = await seedMarketplace();
+      const response = await fetch('/api/admin/seed-marketplace', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'seed' }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to seed marketplace');
+      }
+
+      const result = await response.json();
       setMessage({
         type: 'success',
         text: `✅ Marketplace poblado exitosamente! Se agregaron ${result.addedCount} listings.`
       });
-      setStats(getSeedStats());
+
+      // Reload stats
+      const statsResponse = await fetch('/api/admin/seed-marketplace');
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        setStats(statsData);
+      }
     } catch (error) {
       setMessage({
         type: 'error',
@@ -53,7 +88,18 @@ export default function SeedMarketplacePage() {
 
     setLoading(true);
     try {
-      const count = await clearMarketplace();
+      const response = await fetch('/api/admin/seed-marketplace', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'clear' }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to clear marketplace');
+      }
+
+      const count = await response.json();
       setMessage({
         type: 'info',
         text: `🗑️ Se eliminaron ${count} listings del marketplace`
