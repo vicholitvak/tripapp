@@ -1,10 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ModernCard } from '../components/ui/modern-card';
 import { Header } from '../components/header';
+import { AuthModal } from '../components/auth-modal';
+import { useAuth } from '../context/AuthContext';
 import {
   Star,
   Heart,
@@ -17,6 +20,19 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
+  const router = useRouter();
+  const { user } = useAuth();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const handleOperatorClick = () => {
+    if (user) {
+      // Usuario autenticado, ir al onboarding
+      router.push('/onboarding/welcome');
+    } else {
+      // No autenticado, mostrar modal de login
+      setIsAuthModalOpen(true);
+    }
+  };
   const services = [
     {
       id: 'tours',
@@ -339,7 +355,10 @@ export default function Home() {
                 >
                   Explorar Tours
                 </Link>
-                <button className="border-2 border-white text-white font-bold px-8 py-4 rounded-full hover:bg-white/10 transition-all duration-300">
+                <button
+                  onClick={handleOperatorClick}
+                  className="border-2 border-white text-white font-bold px-8 py-4 rounded-full hover:bg-white/10 transition-all duration-300"
+                >
                   Soy Operador
                 </button>
               </motion.div>
@@ -394,6 +413,16 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={() => {
+          setIsAuthModalOpen(false);
+          router.push('/onboarding/welcome');
+        }}
+      />
     </div>
   );
 }

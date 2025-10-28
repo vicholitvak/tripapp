@@ -9,9 +9,10 @@ import { auth } from '../lib/firebase';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export function AuthModal({ isOpen, onClose }: AuthModalProps) {
+export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,8 +50,12 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       } else {
         await signInWithEmailAndPassword(auth, formData.email, formData.password);
       }
-      onClose();
       setFormData({ email: '', password: '', name: '' });
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        onClose();
+      }
     } catch (error) {
       const err = error as { code?: string; message?: string };
       const errorMessage = err.code === 'auth/email-already-in-use'
@@ -74,8 +79,12 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setLoading(true);
     try {
       await signInWithGoogle();
-      onClose();
       setFormData({ email: '', password: '', name: '' });
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        onClose();
+      }
     } catch {
       setError('Error al iniciar sesión con Google');
     } finally {

@@ -98,14 +98,14 @@ function TourBookingContent() {
         totalAmount: instance.pricePerPerson * numberOfPeople,
         discountApplied: instance.dynamicPricing?.isActive
           ? instance.dynamicPricing.discountPercentage
-          : undefined,
+          : 0,
         contactInfo: {
           phone: contactInfo.phone,
-          emergencyContact: contactInfo.emergencyContact || undefined,
-          emergencyPhone: contactInfo.emergencyPhone || undefined,
+          emergencyContact: contactInfo.emergencyContact || '',
+          emergencyPhone: contactInfo.emergencyPhone || '',
         },
-        specialRequests: specialRequests || undefined,
-        dietaryRestrictions: dietaryRestrictions.length > 0 ? dietaryRestrictions : undefined,
+        specialRequests: specialRequests || '',
+        dietaryRestrictions: dietaryRestrictions.length > 0 ? dietaryRestrictions : [],
         reviewSubmitted: false,
       };
 

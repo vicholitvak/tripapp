@@ -7,6 +7,7 @@ import Head from 'next/head';
 import { motion } from 'framer-motion';
 import { ModernCard } from '../../components/ui/modern-card';
 import { ChefHat, Clock, MapPin, Star, Award, Heart, TrendingUp, Utensils } from 'lucide-react';
+import { Header } from '../../components/header';
 
 // Componentes de Moai integrados
 import FeaturedCarousel from './components/FeaturedCarousel';
@@ -90,39 +91,8 @@ export default function Eat() {
         <meta name="description" content="Descubre la gastronomía local de San Pedro de Atacama. Delivery de comida casera con Moai." />
       </Head>
 
-      {/* Modern Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <Link href="/" className="text-2xl font-bold text-atacama-orange cursor-pointer">
-              Santurist
-            </Link>
-
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">Inicio</Link>
-              <Link href="/tours" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">Tours</Link>
-              <Link href="/eat" className="text-atacama-orange font-bold transition-colors">¿Qué Comer?</Link>
-              <Link href="/services" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">Servicios</Link>
-              <Link href="/marketplace" className="text-gray-700 hover:text-atacama-orange font-medium transition-colors">Tienda</Link>
-            </nav>
-
-            <div className="flex items-center space-x-4">
-              {user ? (
-                <div className="flex items-center space-x-4">
-                  <span className="text-gray-700 hidden md:block">Hola, {user.displayName}</span>
-                  <button className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-colors font-medium">
-                    Salir
-                  </button>
-                </div>
-              ) : (
-                <button className="bg-atacama-orange text-white px-6 py-2 rounded-full hover:bg-atacama-orange/90 transition-colors font-medium">
-                  Iniciar Sesión
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Header Global */}
+      <Header />
 
       <main className="pt-20">
         {/* Hero Section - Integración Moai */}
